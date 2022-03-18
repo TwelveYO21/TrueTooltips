@@ -1,0 +1,75 @@
+Mods:
+{
+    TrueTooltips:
+    {
+        Config:
+        {
+            XOffset: Tooltip X Offset
+            YOffset: Tooltip Y Offset
+            Background: Background
+            BGXOffset: Background X Offset
+            BGYOffset: Background Y Offset
+            BGPaddingRight: Background Right Padding
+            BGPaddingBottom: Background Bottom Padding
+            Spacing: Line Spacing
+            Sprite: Sprite
+            SpriteAlways: Always show item's sprite
+            SpriteAlwaysTooltip: Hold SHIFT to show the sprite when this is off
+            TextPulse: Text Pulse
+            #VanillaOrder: Vanilla Line Order
+
+            Header1: Custom Tooltip Lines
+
+            ItemAmmo: Item Ammo
+            ItemAmmoTooltip: Adds a tooltip line showing the item's ammo, as well as the mod adding the ammo when "Item Mod" is on
+            ItemMod: Item Mod
+            ItemModTooltip: Shows the mod adding the item when holding SHIFT, or always, alternatively
+            ItemModAlways: Always show item's mod
+            ItemModAlwaysTooltip: Hold SHIFT to show the mod when this is off
+            BetterPrice: Better Price
+            BetterPriceTooltip: Improves the vanilla price tooltip line to always be visible, have individual colors for different coins and be less redundant
+            BetterSpeed: Better Speed
+            BetterSpeedTooltip: Improves the vanilla speed tooltip line to show attacks per second instead of, e.g., "{$LegacyTooltip.8}"
+            BetterKnockback: Better Knockback
+            BetterKnockbackTooltip: Improves the vanilla knockback tooltip line to show a numeric value instead of, e.g., "{$LegacyTooltip.19}"
+            WpnPlusAmmoDmg: Weapon + Ammo Damage
+            WpnPlusAmmoDmgTooltip: Improves the vanilla damage tooltip line to show the combined damage of the weapon and its ammo
+            WpnPlusAmmoKb: Weapon + Ammo Knockback
+            WpnPlusAmmoKbTooltip: Makes the knockback tooltip line show the combined knockback of the weapon and its ammo if "Better Knockback" is on
+
+            Header2: Vanilla Tooltip Lines
+
+            Damage: Damage (e.g., "38 magic{$LegacyTooltip.55}")
+            CritChance: Crit Chance (e.g., "24{$LegacyTooltip.5}")
+            Speed: Speed (e.g., "{$LegacyTooltip.8}")
+            SpecialSpeedScaling: Special Speed Scaling (e.g., "50% benefit from attack speed boosts")
+            Knockback: Knockback (e.g., "{$LegacyTooltip.19}")
+            FishingPower: Fishing Power (e.g., "45% fishing power")
+            BaitPower: Bait Power (e.g., "40% bait power")
+            WandConsumes: Wand Consumes (e.g., "{$LegacyTooltip.52}{$ItemName.Bone}")
+            Defense: Defense (e.g., "4{$LegacyTooltip.25}")
+            PickPower: Pickaxe Power (e.g., "150{$LegacyTooltip.26}")
+            AxePower: Axe Power (e.g., "85{$LegacyTooltip.27}")
+            HammerPower: Hammer Power (e.g., "90{$LegacyTooltip.28}")
+            TileBoost: Tile Boost (e.g., "+3{$LegacyTooltip.54}")
+            HealLife: Heal Life (e.g., "Restores 100 life")
+            HealMana: Heal Mana (e.g., "Restores 100 mana")
+            UseMana: Use Mana (e.g., "Uses 17 mana")
+            BuffTime: Buff Time (e.g., "5 minute duration")
+            OneDropLogo: One Drop Logo
+            GoodModifier: Good Modifier (e.g., "+10{$LegacyTooltip.39}")
+            BadModifier: Bad Modifier (e.g., "-10{$LegacyTooltip.39}")
+            SetBonus: Set Bonus (e.g., "{$LegacyTooltip.48} {$ArmorSetBonus.Meteor}")
+            JourneyResearch: Journey Research (e.g., "Research 30 more to unlock duplication")
+            BestiaryNotes: Bestiary Notes (e.g., "{$Bestiary_ItemDropConditions.IsCrimson}")
+            SpecialPrice: Special Price (e.g., "{$LegacyTooltip.50} 5 defender medals")
+            Price: Price (e.g., "{$LegacyTooltip.50} 1 {$LegacyInterface.16}")
+        }
+
+        TTGlobalItem:
+        {
+            Speed: " attacks per second"
+            Knockback: " knockback"
+        }
+    }
+}
