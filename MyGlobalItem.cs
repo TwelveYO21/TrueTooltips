@@ -82,7 +82,7 @@
             {
                 int yOffset = lines.IndexOf(line) == index + 1 && config.sprite ? 10 + (y < textureY ? textureY - y : 0) : 0;
 
-                ChatManager.DrawColorCodedStringWithShadow(spriteBatch, fontMouseText, line.text, new Vector2(x + (lines.IndexOf(line) <= index && config.sprite ? max + 10 : 0), y + yOffset), TextPulse(line.overrideColor ?? (lines.IndexOf(line) == 0 ? rarityColors[item.rare] : Color.White)), 0, Vector2.Zero, Vector2.One);
+                ChatManager.DrawColorCodedStringWithShadow(spriteBatch, fontMouseText, line.text, new Vector2(x + (lines.IndexOf(line) <= index && config.sprite ? max + 10 : 0), y + yOffset), TextPulse(line.overrideColor ?? (lines.IndexOf(line) == 0 ? (rarityColors.TryGetValue(item.rare, out Color value) ? value : Color.White) : Color.White)), 0, Vector2.Zero, Vector2.One);
 
                 y += (int)fontMouseText.MeasureString(line.text).Y + config.spacing + yOffset;
             }
@@ -345,7 +345,7 @@
             var var4 = new bool[1];
             int var5 = -1;
 
-            return ItemLoader.ModifyTooltips(item, ref var1, new[] { "ItemName" }, ref var2, ref var3, ref var4, ref var5, out _)[0].overrideColor ?? rarityColors[item.rare];
+            return ItemLoader.ModifyTooltips(item, ref var1, new[] { "ItemName" }, ref var2, ref var3, ref var4, ref var5, out _)[0].overrideColor ?? (rarityColors.TryGetValue(item.rare, out Color value) ? value : Color.White);
         }
 
         internal static Color TextPulse(Color color) => new Color(color.R * mouseTextColor / 255, color.G * mouseTextColor / 255, color.B * mouseTextColor / 255, mouseTextColor);
