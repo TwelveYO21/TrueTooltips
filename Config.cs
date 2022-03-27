@@ -56,25 +56,25 @@
         [Label("Color"), DefaultValue(typeof(Color), "63,81,151,255")]
         public Color bgColor;
 
-        [Label("Right Padding"),
-        Range(0, 999),
-        DefaultValue(10)]
-        public int paddingRight;
-
         [Label("Left Padding"),
         Range(0, 999),
-        DefaultValue(10)]
-        public int paddingLeft;
+        DefaultValue(16)]
+        public int padLeft;
+
+        [Label("Right Padding"),
+        Range(0, 999),
+        DefaultValue(16)]
+        public int padRight;
 
         [Label("Top Padding"),
         Range(0, 999),
-        DefaultValue(10)]
-        public int paddingTop;
+        DefaultValue(16)]
+        public int padTop;
 
         [Label("Bottom Padding"),
         Range(0, 999),
-        DefaultValue(10)]
-        public int paddingBottom;
+        DefaultValue(16)]
+        public int padBottom;
 
         [Header("[c/ffff00:Offset]")]
 
@@ -144,7 +144,7 @@
         [Label("Damage"),
         Tooltip("The item's damage and class."),
         DefaultValue(typeof(Color), "255,255,255,255")]
-        public Color dmg;
+        public Color damage;
 
         [Label("Equipable"),
         Tooltip("The item is equipable."),
