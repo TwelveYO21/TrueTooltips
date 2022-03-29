@@ -47,20 +47,20 @@
                 tooltipWidth = 0,
                 tooltipHeight = -config.spacing,
                 max = new[] { spriteRect.Width, spriteRect.Height, 64 }.Max(),
-                offsetIndex = item.ToolTip.Lines > 0 ? Math.Abs(lines.ToList().FindIndex(l => l.Name == "Tooltip0")) : lines.Count;
+                offsetIndex = lines.ToList().FindLastIndex(l => l.mod == "Terraria" && !new Regex("^(To|Et|We|Se|Ex)").IsMatch(l.Name) || l.mod == mod.Name || l.isModifier);
 
             foreach(TooltipLine line in lines)
             {
-                int lineWidth = (int)ChatManager.GetStringSize(fontMouseText, line.text, Vector2.One).X + (config.sprite && lines.IndexOf(line) < offsetIndex ? max + 16 : 0),
+                int lineWidth = (int)ChatManager.GetStringSize(fontMouseText, line.text, Vector2.One).X + (config.sprite && lines.IndexOf(line) <= offsetIndex ? max + 16 : 0),
                     lineHeight = (int)fontMouseText.MeasureString(line.text).Y;
 
                 if(lineWidth > tooltipWidth)
                     tooltipWidth = lineWidth;
 
-                if(config.sprite && lines.IndexOf(line) == lines.ToList().FindIndex(l => l.Name == "Tooltip0") - 1)
-                    tooltipHeight = Math.Max(tooltipHeight + lineHeight, spriteRect.Height);
+                if(config.sprite && lines.IndexOf(line) == offsetIndex && !line.Equals(lines.Last()))
+                    tooltipHeight = Math.Max(tooltipHeight + lineHeight, max) + config.spacing;
 
-                tooltipHeight += lineHeight + config.spacing;
+                tooltipHeight += (lineHeight + config.spacing) * (lines.IndexOf(line) == lines.ToList().FindIndex(l => l.isModifier) - 1 && !line.Equals(lines.Last()) ? 2 : 1);
             }
 
             if(x + tooltipWidth + config.padRight > screenWidth)
@@ -86,12 +86,12 @@
             {
                 int lineHeight = (int)fontMouseText.MeasureString(line.text).Y;
 
-                ChatManager.DrawColorCodedStringWithShadow(spriteBatch, fontMouseText, line.text, new Vector2(x + (config.sprite && lines.IndexOf(line) < offsetIndex ? max + 16 : 0), y), TextPulse(line.overrideColor ?? (lines.IndexOf(line) == 0 && rarityColors.TryGetValue(item.rare, out Color value) ? value : Color.White)), 0, Vector2.Zero, Vector2.One);
+                ChatManager.DrawColorCodedStringWithShadow(spriteBatch, fontMouseText, line.text, new Vector2(x + (config.sprite && lines.IndexOf(line) <= offsetIndex ? max + 16 : 0), y), TextPulse(line.overrideColor ?? (lines.IndexOf(line) == 0 && rarityColors.TryGetValue(item.rare, out Color value) ? value : Color.White)), 0, Vector2.Zero, Vector2.One);
 
-                if(config.sprite && lines.IndexOf(line) == lines.ToList().FindIndex(l => l.Name == "Tooltip0") - 1)
-                    y = Math.Max(y + lineHeight, spriteY + spriteRect.Height);
+                if(config.sprite && lines.IndexOf(line) == offsetIndex && !line.Equals(lines.Last()))
+                    y = Math.Max(y + lineHeight, spriteY + max) + config.spacing;
 
-                y += lineHeight + config.spacing;
+                y += (lineHeight + config.spacing) * (lines.IndexOf(line) == lines.ToList().FindIndex(l => l.isModifier) - 1 && !line.Equals(lines.Last()) ? 2 : 1);
             }
 
             return false;
@@ -101,26 +101,14 @@
         {
             Config config = GetInstance<Config>();
             float itemKnockback = item.knockBack;
+            List<TooltipLine> modifiers = lines.FindAll(l => l.isModifier);
             Player player = LocalPlayer;
 
-            if(item.useAmmo > 0 || item.fishingPole > 0 || item.tileWand > 0)
-            {
-                foreach(Item invItem in player.inventory)
-                    if(invItem.active && (item.useAmmo > 0 && invItem.ammo == item.useAmmo || item.fishingPole > 0 && invItem.bait > 0 || item.tileWand > 0 && invItem.type == item.tileWand))
-                    {
-                        currentAmmo = invItem;
-                        break;
-                    }
-                    else currentAmmo = null;
-
-                for(int i = 54; i < 58; i++)
-                    if(player.inventory[i].active && item.useAmmo > 0 && player.inventory[i].ammo == item.useAmmo)
-                    {
-                        currentAmmo = player.inventory[i];
-                        break;
-                    }
-            }
-            else currentAmmo = null;
+            int itemValue = item.stack * (item.buy ? item.GetStoreValue() : item.value / 5),
+                plat = itemValue / 1_000_000,
+                gold = itemValue / 10000 % 100,
+                silver = itemValue / 100 % 100,
+                copper = itemValue % 100;
 
             if(item.type == 905)
             {
@@ -169,6 +157,25 @@
                         wandConsumes = lines.Find(l => l.Name == "WandConsumes"),
                         wellFedExpert = lines.Find(l => l.Name == "WellFedExpert");
 
+            if(item.useAmmo > 0 || item.fishingPole > 0 || item.tileWand > 0)
+            {
+                foreach(Item invItem in player.inventory)
+                    if(invItem.active && (item.useAmmo > 0 && invItem.ammo == item.useAmmo || item.fishingPole > 0 && invItem.bait > 0 || item.tileWand > 0 && invItem.type == item.tileWand))
+                    {
+                        currentAmmo = invItem;
+                        break;
+                    }
+                    else currentAmmo = null;
+
+                for(int i = 54; i < 58; i++)
+                    if(player.inventory[i].active && item.useAmmo > 0 && player.inventory[i].ammo == item.useAmmo)
+                    {
+                        currentAmmo = player.inventory[i];
+                        break;
+                    }
+            }
+            else currentAmmo = null;
+
             if(config.modName)
                 name.text += item.modItem?.mod.DisplayName.Insert(0, " - ");
 
@@ -177,30 +184,54 @@
 
             if(config.ammoLine && (item.useAmmo > 0 || item.fishingPole > 0 || item.tileWand > 0))
             {
-                lines.Insert(lines.IndexOf(lines.Find(l => l.Name == "Velocity") ?? knockback ?? speed ?? critChance ?? damage ?? name) + 1, new TooltipLine(mod, "", currentAmmo != null ? currentAmmo.HoverName + (config.modName ? currentAmmo.modItem?.mod.DisplayName.Insert(0, " - ") : "") : "No " + (item.fishingPole > 0 ? "Bait" : new Dictionary<int, string> { [40] = "Arrow", [71] = "Coin", [97] = "Bullet", [169] = "Sand", [283] = "Dart", [771] = "Rocket", [780] = "Solution", [931] = "Flare" }.TryGetValue(item.useAmmo, out string value) ? value : Lang.GetItemNameValue(item.useAmmo > 0 ? item.useAmmo : item.tileWand))) { overrideColor = currentAmmo != null ? rarityColor : RarityTrash });
+                lines.Insert(lines.IndexOf(useMana ?? fishingPow ?? lines.Find(l => l.Name == "Velocity") ?? knockback ?? speed ?? critChance ?? damage ?? name) + 1, new TooltipLine(mod, "AmmoLine", currentAmmo != null ? currentAmmo.HoverName + (config.modName ? currentAmmo.modItem?.mod.DisplayName.Insert(0, " - ") : "") : "No " + (item.fishingPole > 0 ? "Bait" : new Dictionary<int, string> { [40] = "Arrow", [71] = "Coin", [97] = "Bullet", [169] = "Sand", [283] = "Dart", [771] = "Rocket", [780] = "Solution", [931] = "Flare" }.TryGetValue(item.useAmmo, out string value) ? value : Lang.GetItemNameValue(item.useAmmo > 0 ? item.useAmmo : item.tileWand))) { overrideColor = currentAmmo != null ? rarityColor : RarityTrash });
 
                 lines.Remove(needsBait);
                 lines.Remove(wandConsumes);
             }
 
+            int index = lines.FindLastIndex(l => l.mod == "Terraria" && !new Regex("^(To|Et|We|Bu|Pr|Se|Ex|Spec)").IsMatch(l.Name) || l.mod == mod.Name) + 1;
+
+            if(lines.RemoveAll(l => l.isModifier) > 0)
+                lines.InsertRange(index, modifiers);
+
             if(config.priceLine)
             {
-                int price = item.stack * (item.buy ? item.GetStoreValue() : item.value / 5),
-                    plat = price / 1_000_000,
-                    gold = price / 10000 % 100,
-                    silver = price / 100 % 100,
-                    copper = price % 100;
-
-                if(price > 0 && !(item.type > 70 && item.type < 75))
-                    lines.Insert(item.ToolTip.Lines > 0 ? Math.Abs(lines.FindIndex(l => l.Name == "Tooltip0")) : lines.Count, new TooltipLine(mod, "", item.buy && item.shopSpecialCurrency >= 0 ? new Regex($@"{Lang.tip[50].Value}\s").Replace(lines.Find(l => l.Name == "SpecialPrice").text, "", 1) : (plat > 0 ? $"[c/{TextPulse(CoinPlatinum).Hex3()}:{plat} platinum] " : "") + (gold > 0 ? $"[c/{TextPulse(CoinGold).Hex3()}:{gold} gold] " : "") + (silver > 0 ? $"[c/{TextPulse(CoinSilver).Hex3()}:{silver} silver] " : "") + (copper > 0 ? $"[c/{TextPulse(CoinCopper).Hex3()}:{copper} copper]" : "")));
+                if(itemValue > 0 && !(item.type > 70 && item.type < 75))
+                    lines.Insert(index, new TooltipLine(mod, "PriceLine", item.buy && item.shopSpecialCurrency >= 0 ? new Regex($@"{Lang.tip[50].Value}\s").Replace(lines.Find(l => l.Name == "SpecialPrice").text, "", 1) : (plat > 0 ? $"[c/{TextPulse(CoinPlatinum).Hex3()}:{plat} platinum] " : "") + (gold > 0 ? $"[c/{TextPulse(CoinGold).Hex3()}:{gold} gold] " : "") + (silver > 0 ? $"[c/{TextPulse(CoinSilver).Hex3()}:{silver} silver] " : "") + (copper > 0 ? $"[c/{TextPulse(CoinCopper).Hex3()}:{copper} copper]" : "")));
 
                 lines.RemoveAll(l => l.Name == "Price" || l.Name == "SpecialPrice");
+            }
+
+            TooltipLine price = lines.Find(l => l.Name == "Price"),
+                        specialPrice = lines.Find(l => l.Name == "SpecialPrice");
+
+            if(price != null)
+            {
+                lines.Remove(price);
+                lines.Insert(index, price);
+
+                price.overrideColor = plat > 0 ? CoinPlatinum : gold > 0 ? CoinGold : silver > 0 ? CoinSilver : copper > 0 ? CoinCopper : new Color(120, 120, 120);
+            }
+
+            if(specialPrice != null)
+            {
+                lines.Remove(specialPrice);
+                lines.Insert(index, specialPrice);
             }
 
             if(ammo != null) ammo.overrideColor = config.ammo;
             if(axePow != null) axePow.overrideColor = config.axePow;
             if(baitPow != null) baitPow.overrideColor = config.baitPow;
-            if(buffTime != null) buffTime.overrideColor = config.buffTime;
+
+            if(buffTime != null)
+            {
+                lines.Remove(buffTime);
+                lines.Insert(lines.IndexOf(healMana ?? healLife ?? name) + 1, buffTime);
+
+                buffTime.overrideColor = config.buffTime;
+            }
+
             if(consumable != null) consumable.overrideColor = config.consumable;
             if(critChance != null) critChance.overrideColor = config.critChance;
 
@@ -214,7 +245,15 @@
             }
 
             if(defense != null) defense.overrideColor = config.defense;
-            if(equipable != null) equipable.overrideColor = config.equipable;
+
+            if(equipable != null)
+            {
+                lines.Remove(equipable);
+                lines.Insert(lines.IndexOf(defense ?? lines.Find(l => l.Name == "Velocity") ?? name) + 1, equipable);
+
+                equipable.overrideColor = config.equipable;
+            }
+
             if(etherianMana != null) etherianMana.overrideColor = config.etherianMana;
             if(expert != null) expert.overrideColor = config.expert;
             if(fav != null) fav.overrideColor = config.fav;
@@ -279,7 +318,6 @@
             if(config.baitPow.A == 0) lines.Remove(baitPow);
             if(config.buffTime.A == 0) lines.Remove(buffTime);
             if(config.consumable.A == 0) lines.Remove(consumable);
-
             if(config.critChance.A == 0 || (item.ammo > 0 && !config.ammoCrit)) lines.Remove(critChance);
             if(config.damage.A == 0) lines.Remove(damage);
             if(config.defense.A == 0) lines.Remove(defense);
@@ -293,7 +331,6 @@
             if(config.hammerPow.A == 0) lines.Remove(hammerPow);
             if(config.healLife.A == 0) lines.Remove(healLife);
             if(config.healMana.A == 0) lines.Remove(healMana);
-
             if(config.knockback.A == 0 || itemKnockback + (currentAmmo != null ? player.GetWeaponKnockback(currentAmmo, currentAmmo.knockBack) : 0) == 0) lines.Remove(knockback);
             if(config.material.A == 0) lines.Remove(material);
             if(config.needsBait.A == 0) lines.Remove(needsBait);
@@ -303,13 +340,14 @@
             if(config.setBonus.A == 0) lines.Remove(setBonus);
             if(config.social.A == 0) lines.Remove(social);
             if(config.socialDescr.A == 0) lines.Remove(socialDescr);
-
             if(config.speed.A == 0 || (item.type > 70 && item.type < 75)) lines.Remove(speed);
             if(config.tileBoost.A == 0) lines.Remove(tileBoost);
             if(config.useMana.A == 0) lines.Remove(useMana);
             if(config.vanity.A == 0) lines.Remove(vanity);
             if(config.wandConsumes.A == 0) lines.Remove(wandConsumes);
             if(config.wellFedExpert.A == 0) lines.Remove(wellFedExpert);
+
+            lines.Remove(lines.Find(l => l.Name == "OneDropLogo"));
         }
 
         public override void PostDrawTooltip(Item item, ReadOnlyCollection<DrawableTooltipLine> lines)

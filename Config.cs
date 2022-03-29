@@ -8,110 +8,110 @@
     {
         public override ConfigScope Mode => ConfigScope.ClientSide;
 
-        [Header("[c/ffff00:Custom Tooltip Lines]")]
+        [Header("[c/ff8000:Custom Tooltip Lines]")]
 
-        [Label("Ammo Line"),
+        [Label("[i:2177]  Ammo Line"),
         Tooltip("Shows the item's ammo's name, amount and rarity, shows the mod that adds the ammo if \"Mod name next to item name\" is on and shows the ammo the item needs if the item has no ammo. \nWorks with fishing poles and tile wands."),
         DefaultValue(true)]
         public bool ammoLine;
 
-        [Label("Velocity Line"),
-        Tooltip("Shows the item's velocity. May not always be accurate due to items shooting multiple different projectiles, projectiles changing velocity mid flight, etc.."),
-        DefaultValue(typeof(Color), "255,255,255,255")]
-        public Color velocityLine;
-
-        [Label("Better Price Line"),
+        [Label("[i:855]  Better Price Line"),
         Tooltip("Correct sell price for items with custom price, always visible, better color coding, cleaner. Replaces vanilla price line."),
         DefaultValue(true)]
         public bool priceLine;
 
-        [Label("Better Speed Line"),
+        [Label("[i:3099]  Velocity Line"),
+        Tooltip("Shows the item's velocity. May not always be accurate due to items shooting multiple different projectiles, projectiles changing velocity mid flight, etc.."),
+        DefaultValue(typeof(Color), "255,255,255,255")]
+        public Color velocityLine;
+
+        [Label("[i:211]  Better Speed Line"),
         Tooltip("Shows attacks per second. Replaces vanilla speed line."),
         DefaultValue(true)]
         public bool speedLine;
 
-        [Label("Better Knockback Line"),
+        [Label("[i:536]  Better Knockback Line"),
         Tooltip("Shows knockback as a number. Replaces vanilla knockback line."),
         DefaultValue(true)]
         public bool knockbackLine;
 
-        [Label("Combine weapon and ammo damage"), DefaultValue(true)]
+        [Label("[i:398]  Combine weapon and ammo damage"), DefaultValue(true)]
         public bool wpnPlusAmmoDmg;
 
-        [Label("Combine weapon and ammo knockback"),
+        [Label("[i:398]  Combine weapon and ammo knockback"),
         Tooltip("Requires Better Knockback Line to be on."),
         DefaultValue(true)]
         public bool wpnPlusAmmoKb;
 
-        [Label("Combine weapon and ammo velocity"), DefaultValue(true)]
+        [Label("[i:398]  Combine weapon and ammo velocity"), DefaultValue(true)]
         public bool wpnPlusAmmoVelocity;
 
-        [Label("Mod name next to item name"),
+        [Label("[i:1299]  Mod name next to item name"),
         Tooltip("Shows the mod that adds the item next to the item's name."),
         DefaultValue(true)]
         public bool modName;
 
-        [Header("[c/ffff00:Background]")]
+        [Header("[c/ff8000:Background]")]
 
-        [Label("Color"), DefaultValue(typeof(Color), "63,81,151,255")]
+        [Label("[i:1072]  Color"), DefaultValue(typeof(Color), "63,81,151,255")]
         public Color bgColor;
 
-        [Label("Left Padding"),
+        [Label("[i:2799]  Left Padding"),
         Range(0, 999),
         DefaultValue(16)]
         public int padLeft;
 
-        [Label("Right Padding"),
+        [Label("[i:2799]  Right Padding"),
         Range(0, 999),
         DefaultValue(16)]
         public int padRight;
 
-        [Label("Top Padding"),
+        [Label("[i:2799]  Top Padding"),
         Range(0, 999),
         DefaultValue(16)]
         public int padTop;
 
-        [Label("Bottom Padding"),
+        [Label("[i:2799]  Bottom Padding"),
         Range(0, 999),
         DefaultValue(16)]
         public int padBottom;
 
-        [Header("[c/ffff00:Offset]")]
+        [Header("[c/ff8000:Offset]")]
 
-        [Label("X"),
+        [Label("[i:2799]  X"),
         Tooltip("X position of the tooltip."),
         Range(0, 999),
         DefaultValue(16)]
         public int x;
 
-        [Label("Y"),
+        [Label("[i:2799]  Y"),
         Tooltip("Y position of the tooltip."),
         Range(0, 999),
         DefaultValue(16)]
         public int y;
 
-        [Label("Spacing"),
+        [Label("[i:2799]  Spacing"),
         Tooltip("Add extra space between lines."),
         Range(0, 999),
         DefaultValue(0)]
         public int spacing;
 
-        [Header("[c/ffff00:Miscellaneous]")]
+        [Header("[c/ff8000:Miscellaneous]")]
 
-        [Label("Sprite"),
+        [Label("[i:1440]  Sprite"),
         Tooltip("Display the item's sprite in the tooltip."),
         DefaultValue(true)]
         public bool sprite;
 
-        [Label("Text Pulse"), DefaultValue(false)]
+        [Label("[i:3062]  Text Pulse"), DefaultValue(false)]
         public bool textPulse;
 
-        [Label("Crit chance line for ammo"),
+        [Label("[i:1300]  Crit chance line for ammo"),
         Tooltip("Off by default because ammo crit chance doesn't affect crit chance."),
         DefaultValue(false)]
         public bool ammoCrit;
 
-        [Header("[c/ffff00:Vanilla Tooltip Lines]")]
+        [Header("[c/ff8000:Vanilla Tooltip Lines]")]
 
         [Label("+- X range"),
         Tooltip("How much more/less range the tool has, in tiles."),
