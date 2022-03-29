@@ -16,5 +16,6 @@
 - Combines weapon and ammo damage and weapon and ammo velocity and combines weapon and ammo knockback if "Better Knockback Line" is on.
 - Shows the mod that adds the item next to the item's name.
 - Adds a background to tooltips.
+- Changes the layout of the tooltip to be more readable.
 - Gives text that appears when hovering over items with custom rarity that are dropped or in the hotbar the right color and shows the name of the frontmost dropped item instead of the backmost.
 - Turn off text pulse.
