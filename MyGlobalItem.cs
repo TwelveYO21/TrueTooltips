@@ -57,8 +57,8 @@
                 if(lineWidth > tooltipWidth)
                     tooltipWidth = lineWidth;
 
-                if(config.sprite && lines.IndexOf(line) == offsetIndex && !line.Equals(lines.Last()))
-                    tooltipHeight = Math.Max(tooltipHeight + lineHeight, max) + config.spacing;
+                if(lines.IndexOf(line) == offsetIndex && !line.Equals(lines.Last()))
+                    tooltipHeight = (config.sprite ? Math.Max(tooltipHeight + lineHeight, max) : tooltipHeight + lineHeight) + config.spacing;
 
                 tooltipHeight += (lineHeight + config.spacing) * (lines.IndexOf(line) == lines.ToList().FindIndex(l => l.isModifier) - 1 && !line.Equals(lines.Last()) ? 2 : 1);
             }
@@ -88,8 +88,8 @@
 
                 ChatManager.DrawColorCodedStringWithShadow(spriteBatch, fontMouseText, line.text, new Vector2(x + (config.sprite && lines.IndexOf(line) <= offsetIndex ? max + 16 : 0), y), TextPulse(line.overrideColor ?? (lines.IndexOf(line) == 0 && rarityColors.TryGetValue(item.rare, out Color value) ? value : Color.White)), 0, Vector2.Zero, Vector2.One);
 
-                if(config.sprite && lines.IndexOf(line) == offsetIndex && !line.Equals(lines.Last()))
-                    y = Math.Max(y + lineHeight, spriteY + max) + config.spacing;
+                if(lines.IndexOf(line) == offsetIndex && !line.Equals(lines.Last()))
+                    y = (config.sprite ? Math.Max(y + lineHeight, spriteY + max) : y + lineHeight) + config.spacing;
 
                 y += (lineHeight + config.spacing) * (lines.IndexOf(line) == lines.ToList().FindIndex(l => l.isModifier) - 1 && !line.Equals(lines.Last()) ? 2 : 1);
             }
