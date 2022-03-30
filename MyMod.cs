@@ -12,11 +12,11 @@
 
         public override void ModifyInterfaceLayers(System.Collections.Generic.List<GameInterfaceLayer> layers)
         {
-            int mouseText = layers.FindIndex(l => l.Name == "Vanilla: Mouse Text");
+            int index = layers.FindIndex(l => l.Name == "Vanilla: Mouse Text");
 
-            if(mouseText >= 0)
+            if(index >= 0)
             {
-                layers.Insert(mouseText, new LegacyGameInterfaceLayer("", () =>
+                layers.Insert(index, new LegacyGameInterfaceLayer("", () =>
                 {
                     ui.Draw(Main.spriteBatch, new GameTime());
 

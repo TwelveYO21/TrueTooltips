@@ -33,7 +33,6 @@
             [8] = RarityYellow,
             [9] = RarityCyan,
             [10] = new Color(255, 40, 100),
-            [11] = new Color(180, 40, 255)
         };
 
         public override bool PreDrawTooltip(Item item, ReadOnlyCollection<TooltipLine> lines, ref int _x, ref int _y)
@@ -75,7 +74,8 @@
             if(y - config.padTop < 0)
                 y = config.padTop;
 
-            Utils.DrawInvBG(spriteBatch, new Rectangle(x - config.padLeft, y - config.padTop, tooltipWidth + config.padLeft + config.padRight, tooltipHeight + config.padTop + config.padBottom), new Color(config.bgColor.R * config.bgColor.A / 255, config.bgColor.G * config.bgColor.A / 255, config.bgColor.B * config.bgColor.A / 255, config.bgColor.A));
+            if(config.BgColor.A > 0)
+                Utils.DrawInvBG(spriteBatch, new Rectangle(x - config.padLeft, y - config.padTop, tooltipWidth + config.padLeft + config.padRight, tooltipHeight + config.padTop + config.padBottom), new Color(config.BgColor.R * config.BgColor.A / 255, config.BgColor.G * config.BgColor.A / 255, config.BgColor.B * config.BgColor.A / 255, config.BgColor.A));
 
             if(config.sprite)
                 spriteBatch.Draw(sprite, new Vector2(x + (max - spriteRect.Width) / 2, y + (max - spriteRect.Height) / 2), spriteRect, Color.White);
@@ -86,7 +86,10 @@
             {
                 int lineHeight = (int)fontMouseText.MeasureString(line.text).Y;
 
-                ChatManager.DrawColorCodedStringWithShadow(spriteBatch, fontMouseText, line.text, new Vector2(x + (config.sprite && lines.IndexOf(line) <= offsetIndex ? max + 16 : 0), y), TextPulse(line.overrideColor ?? (lines.IndexOf(line) == 0 && rarityColors.TryGetValue(item.rare, out Color value) ? value : Color.White)), 0, Vector2.Zero, Vector2.One);
+                if(line.Name == "OneDropLogo")
+                    spriteBatch.Draw(oneDropLogo, new Vector2(x + (config.sprite && lines.IndexOf(line) <= offsetIndex ? max + 16 : 0), y), Color.White);
+                else
+                    ChatManager.DrawColorCodedStringWithShadow(spriteBatch, fontMouseText, line.text, new Vector2(x + (config.sprite && lines.IndexOf(line) <= offsetIndex ? max + 16 : 0), y), TextPulse(line.overrideColor ?? (lines.IndexOf(line) == 0 ? item.expert || item.rare == -12 ? new Color(DiscoR, DiscoG, DiscoB) : item.rare >= 11 ? new Color(180, 40, 255) : rarityColors.TryGetValue(item.rare, out Color value) ? value : Color.White : Color.White)), 0, Vector2.Zero, Vector2.One);
 
                 if(lines.IndexOf(line) == offsetIndex && !line.Equals(lines.Last()))
                     y = (config.sprite ? Math.Max(y + lineHeight, spriteY + max) : y + lineHeight) + config.spacing;
@@ -179,8 +182,8 @@
             if(config.modName)
                 name.text += item.modItem?.mod.DisplayName.Insert(0, " - ");
 
-            if(config.velocityLine.A > 0 && item.shootSpeed > 0)
-                lines.Insert(lines.IndexOf(knockback ?? speed ?? critChance ?? damage ?? name) + 1, new TooltipLine(mod, "Velocity", item.shootSpeed + (currentAmmo != null && config.wpnPlusAmmoVelocity ? currentAmmo.shootSpeed : 0) + " velocity") { overrideColor = config.velocityLine });
+            if(config.VelocityLine.A > 0 && item.shootSpeed > 0)
+                lines.Insert(lines.IndexOf(knockback ?? speed ?? critChance ?? damage ?? name) + 1, new TooltipLine(mod, "Velocity", item.shootSpeed + (currentAmmo != null && config.wpnPlusAmmoVelocity ? currentAmmo.shootSpeed : 0) + " velocity") { overrideColor = config.VelocityLine });
 
             if(config.ammoLine && (item.useAmmo > 0 || item.fishingPole > 0 || item.tileWand > 0))
             {
@@ -220,20 +223,20 @@
                 lines.Insert(index, specialPrice);
             }
 
-            if(ammo != null) ammo.overrideColor = config.ammo;
-            if(axePow != null) axePow.overrideColor = config.axePow;
-            if(baitPow != null) baitPow.overrideColor = config.baitPow;
+            if(ammo != null) ammo.overrideColor = config.Ammo;
+            if(axePow != null) axePow.overrideColor = config.AxePow;
+            if(baitPow != null) baitPow.overrideColor = config.BaitPow;
 
             if(buffTime != null)
             {
                 lines.Remove(buffTime);
                 lines.Insert(lines.IndexOf(healMana ?? healLife ?? name) + 1, buffTime);
 
-                buffTime.overrideColor = config.buffTime;
+                buffTime.overrideColor = config.BuffTime;
             }
 
-            if(consumable != null) consumable.overrideColor = config.consumable;
-            if(critChance != null) critChance.overrideColor = config.critChance;
+            if(consumable != null) consumable.overrideColor = config.Consumable;
+            if(critChance != null) critChance.overrideColor = config.CritChance;
 
             if(damage != null)
             {
@@ -241,27 +244,27 @@
                     damage.text = damage.text.Replace(damage.text.Split(' ').First(), player.GetWeaponDamage(item) + player.GetWeaponDamage(currentAmmo) + "");
 
                 if(ModLoader.GetMod("_ColoredDamageTypes") == null)
-                    damage.overrideColor = config.damage;
+                    damage.overrideColor = config.Damage;
             }
 
-            if(defense != null) defense.overrideColor = config.defense;
+            if(defense != null) defense.overrideColor = config.Defense;
 
             if(equipable != null)
             {
                 lines.Remove(equipable);
                 lines.Insert(lines.IndexOf(defense ?? lines.Find(l => l.Name == "Velocity") ?? name) + 1, equipable);
 
-                equipable.overrideColor = config.equipable;
+                equipable.overrideColor = config.Equipable;
             }
 
-            if(etherianMana != null) etherianMana.overrideColor = config.etherianMana;
-            if(expert != null) expert.overrideColor = config.expert;
-            if(fav != null) fav.overrideColor = config.fav;
-            if(favDescr != null) favDescr.overrideColor = config.favDescr;
-            if(fishingPow != null) fishingPow.overrideColor = config.fishingPow;
-            if(hammerPow != null) hammerPow.overrideColor = config.hammerPow;
-            if(healLife != null) healLife.overrideColor = config.healLife;
-            if(healMana != null) healMana.overrideColor = config.healMana;
+            if(etherianMana != null) etherianMana.overrideColor = config.EtherianMana;
+            if(expert != null) expert.overrideColor = config.Expert;
+            if(fav != null) fav.overrideColor = config.Fav;
+            if(favDescr != null) favDescr.overrideColor = config.FavDescr;
+            if(fishingPow != null) fishingPow.overrideColor = config.FishingPow;
+            if(hammerPow != null) hammerPow.overrideColor = config.HammerPow;
+            if(healLife != null) healLife.overrideColor = config.HealLife;
+            if(healMana != null) healMana.overrideColor = config.HealMana;
 
             if(knockback != null)
             {
@@ -280,74 +283,72 @@
                 if(config.knockbackLine)
                     knockback.text = Math.Round(itemKnockback + (currentAmmo != null && config.wpnPlusAmmoKb ? player.GetWeaponKnockback(currentAmmo, currentAmmo.knockBack) : 0), 2) + " knockback";
 
-                knockback.overrideColor = config.knockback;
+                knockback.overrideColor = config.Knockback;
             }
 
-            if(material != null) material.overrideColor = config.material;
-            if(needsBait != null) needsBait.overrideColor = config.needsBait;
-            if(pickPow != null) pickPow.overrideColor = config.pickPow;
-            if(placeable != null) placeable.overrideColor = config.placeable;
-            if(quest != null) quest.overrideColor = config.quest;
-            if(setBonus != null) setBonus.overrideColor = config.setBonus;
-            if(social != null) social.overrideColor = config.social;
-            if(socialDescr != null) socialDescr.overrideColor = config.socialDescr;
+            if(material != null) material.overrideColor = config.Material;
+            if(needsBait != null) needsBait.overrideColor = config.NeedsBait;
+            if(pickPow != null) pickPow.overrideColor = config.PickPow;
+            if(placeable != null) placeable.overrideColor = config.Placeable;
+            if(quest != null) quest.overrideColor = config.Quest;
+            if(setBonus != null) setBonus.overrideColor = config.SetBonus;
+            if(social != null) social.overrideColor = config.Social;
+            if(socialDescr != null) socialDescr.overrideColor = config.SocialDescr;
 
             if(speed != null)
             {
                 if(config.speedLine)
                     speed.text = Math.Round(60 / (item.reuseDelay + (item.useAnimation * (item.melee ? player.meleeSpeed : 1))), 2) + " attacks per second";
 
-                speed.overrideColor = config.speed;
+                speed.overrideColor = config.Speed;
             }
 
-            if(tileBoost != null) tileBoost.overrideColor = config.tileBoost;
-            if(useMana != null) useMana.overrideColor = config.useMana;
-            if(vanity != null) vanity.overrideColor = config.vanity;
-            if(wandConsumes != null) wandConsumes.overrideColor = config.wandConsumes;
-            if(wellFedExpert != null) wellFedExpert.overrideColor = config.wellFedExpert;
+            if(tileBoost != null) tileBoost.overrideColor = config.TileBoost;
+            if(useMana != null) useMana.overrideColor = config.UseMana;
+            if(vanity != null) vanity.overrideColor = config.Vanity;
+            if(wandConsumes != null) wandConsumes.overrideColor = config.WandConsumes;
+            if(wellFedExpert != null) wellFedExpert.overrideColor = config.WellFedExpert;
 
             foreach(TooltipLine line in lines)
             {
-                if(line.isModifierBad) line.overrideColor = config.badMod;
-                else if(line.isModifier) line.overrideColor = config.goodMod;
+                if(line.isModifierBad) line.overrideColor = config.BadMod;
+                else if(line.isModifier) line.overrideColor = config.GoodMod;
             }
 
-            if(config.ammo.A == 0) lines.Remove(ammo);
-            if(config.axePow.A == 0) lines.Remove(axePow);
-            if(config.badMod.A == 0) lines.RemoveAll(l => l.isModifierBad);
-            if(config.baitPow.A == 0) lines.Remove(baitPow);
-            if(config.buffTime.A == 0) lines.Remove(buffTime);
-            if(config.consumable.A == 0) lines.Remove(consumable);
-            if(config.critChance.A == 0 || (item.ammo > 0 && !config.ammoCrit)) lines.Remove(critChance);
-            if(config.damage.A == 0) lines.Remove(damage);
-            if(config.defense.A == 0) lines.Remove(defense);
-            if(config.equipable.A == 0) lines.Remove(equipable);
-            if(config.etherianMana.A == 0) lines.Remove(etherianMana);
-            if(config.expert.A == 0) lines.Remove(expert);
-            if(config.fav.A == 0) lines.Remove(fav);
-            if(config.favDescr.A == 0) lines.Remove(favDescr);
-            if(config.fishingPow.A == 0) lines.Remove(fishingPow);
-            if(config.goodMod.A == 0) lines.RemoveAll(l => !l.isModifierBad && l.isModifier);
-            if(config.hammerPow.A == 0) lines.Remove(hammerPow);
-            if(config.healLife.A == 0) lines.Remove(healLife);
-            if(config.healMana.A == 0) lines.Remove(healMana);
-            if(config.knockback.A == 0 || itemKnockback + (currentAmmo != null ? player.GetWeaponKnockback(currentAmmo, currentAmmo.knockBack) : 0) == 0) lines.Remove(knockback);
-            if(config.material.A == 0) lines.Remove(material);
-            if(config.needsBait.A == 0) lines.Remove(needsBait);
-            if(config.pickPow.A == 0) lines.Remove(pickPow);
-            if(config.placeable.A == 0) lines.Remove(placeable);
-            if(config.quest.A == 0) lines.Remove(quest);
-            if(config.setBonus.A == 0) lines.Remove(setBonus);
-            if(config.social.A == 0) lines.Remove(social);
-            if(config.socialDescr.A == 0) lines.Remove(socialDescr);
-            if(config.speed.A == 0 || (item.type > 70 && item.type < 75)) lines.Remove(speed);
-            if(config.tileBoost.A == 0) lines.Remove(tileBoost);
-            if(config.useMana.A == 0) lines.Remove(useMana);
-            if(config.vanity.A == 0) lines.Remove(vanity);
-            if(config.wandConsumes.A == 0) lines.Remove(wandConsumes);
-            if(config.wellFedExpert.A == 0) lines.Remove(wellFedExpert);
-
-            lines.Remove(lines.Find(l => l.Name == "OneDropLogo"));
+            if(config.Ammo.A == 0) lines.Remove(ammo);
+            if(config.AxePow.A == 0) lines.Remove(axePow);
+            if(config.BadMod.A == 0) lines.RemoveAll(l => l.isModifierBad);
+            if(config.BaitPow.A == 0) lines.Remove(baitPow);
+            if(config.BuffTime.A == 0) lines.Remove(buffTime);
+            if(config.Consumable.A == 0) lines.Remove(consumable);
+            if(config.CritChance.A == 0 || (item.ammo > 0 && !config.ammoCrit)) lines.Remove(critChance);
+            if(config.Damage.A == 0) lines.Remove(damage);
+            if(config.Defense.A == 0) lines.Remove(defense);
+            if(config.Equipable.A == 0) lines.Remove(equipable);
+            if(config.EtherianMana.A == 0) lines.Remove(etherianMana);
+            if(config.Expert.A == 0) lines.Remove(expert);
+            if(config.Fav.A == 0) lines.Remove(fav);
+            if(config.FavDescr.A == 0) lines.Remove(favDescr);
+            if(config.FishingPow.A == 0) lines.Remove(fishingPow);
+            if(config.GoodMod.A == 0) lines.RemoveAll(l => !l.isModifierBad && l.isModifier);
+            if(config.HammerPow.A == 0) lines.Remove(hammerPow);
+            if(config.HealLife.A == 0) lines.Remove(healLife);
+            if(config.HealMana.A == 0) lines.Remove(healMana);
+            if(config.Knockback.A == 0 || itemKnockback + (currentAmmo != null ? player.GetWeaponKnockback(currentAmmo, currentAmmo.knockBack) : 0) == 0) lines.Remove(knockback);
+            if(config.Material.A == 0) lines.Remove(material);
+            if(config.NeedsBait.A == 0) lines.Remove(needsBait);
+            if(config.PickPow.A == 0) lines.Remove(pickPow);
+            if(config.Placeable.A == 0) lines.Remove(placeable);
+            if(config.Quest.A == 0) lines.Remove(quest);
+            if(config.SetBonus.A == 0) lines.Remove(setBonus);
+            if(config.Social.A == 0) lines.Remove(social);
+            if(config.SocialDescr.A == 0) lines.Remove(socialDescr);
+            if(config.Speed.A == 0 || (item.type > 70 && item.type < 75)) lines.Remove(speed);
+            if(config.TileBoost.A == 0) lines.Remove(tileBoost);
+            if(config.UseMana.A == 0) lines.Remove(useMana);
+            if(config.Vanity.A == 0) lines.Remove(vanity);
+            if(config.WandConsumes.A == 0) lines.Remove(wandConsumes);
+            if(config.WellFedExpert.A == 0) lines.Remove(wellFedExpert);
         }
 
         public override void PostDrawTooltip(Item item, ReadOnlyCollection<DrawableTooltipLine> lines)
@@ -365,9 +366,9 @@
             int oneDropLogo = -1;
 
             if(item.modItem?.mod == ModLoader.GetMod("WeaponOut"))
-                return rarityColors.TryGetValue(item.rare, out Color var) ? var : Color.White;
+                return item.expert || item.rare == -12 ? new Color(DiscoR, DiscoG, DiscoB) : item.rare >= 11 ? new Color(180, 40, 255) : rarityColors.TryGetValue(item.rare, out Color weaponOut) ? weaponOut : Color.White;
 
-            return ItemLoader.ModifyTooltips(item, ref numTooltips, new[] { "ItemName" }, ref text, ref modifier, ref badModifier, ref oneDropLogo, out _)[0].overrideColor ?? (rarityColors.TryGetValue(item.rare, out Color value) ? value : Color.White);
+            return ItemLoader.ModifyTooltips(item, ref numTooltips, new[] { "ItemName" }, ref text, ref modifier, ref badModifier, ref oneDropLogo, out _)[0].overrideColor ?? (item.expert || item.rare == -12 ? new Color(DiscoR, DiscoG, DiscoB) : item.rare >= 11 ? new Color(180, 40, 255) : rarityColors.TryGetValue(item.rare, out Color value) ? value : Color.White);
         }
 
         internal static Color TextPulse(Color color) => new Color(color.R * mouseTextColor / 255, color.G * mouseTextColor / 255, color.B * mouseTextColor / 255, mouseTextColor);
