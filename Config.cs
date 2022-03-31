@@ -23,7 +23,7 @@
         [Label("[i:3099]  Velocity Line")]
         [Tooltip("Shows the item's velocity. May not always be accurate due to items shooting multiple different projectiles, projectiles changing velocity mid flight, etc..")]
         [DefaultValue(typeof(Color), "255,255,255,255")]
-        public Color VelocityLine { get; set; }
+        public Color velocityLine;
 
         [Label("[i:211]  Better Speed Line")]
         [Tooltip("Shows attacks per second. Replaces vanilla speed line.")]
@@ -57,7 +57,7 @@
 
         [Label("[i:1072]  Color")]
         [DefaultValue(typeof(Color), "63,81,151,255")]
-        public Color BgColor { get; set; }
+        public Color bgColor;
 
         [Label("[i:2799]  Left Padding")]
         [Range(0, 999)]
@@ -83,19 +83,19 @@
 
         [Label("[i:2799]  X")]
         [Tooltip("X position of the tooltip.")]
-        [Range(0, 999)]
+        [Range(-999, 999)]
         [DefaultValue(16)]
         public int x;
 
         [Label("[i:2799]  Y")]
         [Tooltip("Y position of the tooltip.")]
-        [Range(0, 999)]
+        [Range(-999, 999)]
         [DefaultValue(16)]
         public int y;
 
         [Label("[i:2799]  Spacing")]
         [Tooltip("Add extra space between lines.")]
-        [Range(0, 999)]
+        [Range(-999, 999)]
         [DefaultValue(0)]
         public int spacing;
 

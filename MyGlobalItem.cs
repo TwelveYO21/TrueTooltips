@@ -45,7 +45,7 @@
                 y = mouseY + config.y + (ThickMouse ? 6 : 0),
                 tooltipWidth = 0,
                 tooltipHeight = -config.spacing,
-                max = new[] { spriteRect.Width, spriteRect.Height, 64 }.Max(),
+                max = config.sprite ? new[] { spriteRect.Width, spriteRect.Height, 64 }.Max() : 0,
                 offsetIndex = lines.ToList().FindLastIndex(l => l.mod == "Terraria" && !new Regex("^(To|Et|We|Se|Ex)").IsMatch(l.Name) || l.mod == mod.Name || l.isModifier);
 
             foreach(TooltipLine line in lines)
@@ -57,25 +57,25 @@
                     tooltipWidth = lineWidth;
 
                 if(lines.IndexOf(line) == offsetIndex && !line.Equals(lines.Last()))
-                    tooltipHeight = (config.sprite ? Math.Max(tooltipHeight + lineHeight, max) : tooltipHeight + lineHeight) + config.spacing;
+                    tooltipHeight = Math.Max(tooltipHeight + lineHeight, max) + config.spacing;
 
                 tooltipHeight += (lineHeight + config.spacing) * (lines.IndexOf(line) == lines.ToList().FindIndex(l => l.isModifier) - 1 && !line.Equals(lines.Last()) ? 2 : 1);
             }
 
-            if(x + tooltipWidth + config.padRight > screenWidth)
-                x = screenWidth - tooltipWidth - config.padRight;
+            if(x + tooltipWidth + (config.bgColor.A > 0 ? config.padRight : 0) > screenWidth)
+                x = screenWidth - tooltipWidth - (config.bgColor.A > 0 ? config.padRight : 0);
 
-            if(y + tooltipHeight + config.padBottom > screenHeight)
-                y = screenHeight - tooltipHeight - config.padBottom;
+            if(y + Math.Max(tooltipHeight, max) + (config.bgColor.A > 0 ? config.padBottom : 0) > screenHeight)
+                y = screenHeight - Math.Max(tooltipHeight, max) - (config.bgColor.A > 0 ? config.padBottom : 0);
 
-            if(x - config.padLeft < 0)
-                x = config.padLeft;
+            if(x - (config.bgColor.A > 0 ? config.padLeft : 0) < 0)
+                x = config.bgColor.A > 0 ? config.padLeft : 0;
 
-            if(y - config.padTop < 0)
-                y = config.padTop;
+            if(y - (config.bgColor.A > 0 ? config.padTop : 0) < 0)
+                y = config.bgColor.A > 0 ? config.padTop : 0;
 
-            if(config.BgColor.A > 0)
-                Utils.DrawInvBG(spriteBatch, new Rectangle(x - config.padLeft, y - config.padTop, tooltipWidth + config.padLeft + config.padRight, tooltipHeight + config.padTop + config.padBottom), new Color(config.BgColor.R * config.BgColor.A / 255, config.BgColor.G * config.BgColor.A / 255, config.BgColor.B * config.BgColor.A / 255, config.BgColor.A));
+            if(config.bgColor.A > 0)
+                Utils.DrawInvBG(spriteBatch, new Rectangle(x - config.padLeft, y - config.padTop, tooltipWidth + config.padLeft + config.padRight, Math.Max(tooltipHeight, max) + config.padTop + config.padBottom), new Color(config.bgColor.R * config.bgColor.A / 255, config.bgColor.G * config.bgColor.A / 255, config.bgColor.B * config.bgColor.A / 255, config.bgColor.A));
 
             if(config.sprite)
                 spriteBatch.Draw(sprite, new Vector2(x + (max - spriteRect.Width) / 2, y + (max - spriteRect.Height) / 2), spriteRect, Color.White);
@@ -92,7 +92,7 @@
                     ChatManager.DrawColorCodedStringWithShadow(spriteBatch, fontMouseText, line.text, new Vector2(x + (config.sprite && lines.IndexOf(line) <= offsetIndex ? max + 16 : 0), y), TextPulse(line.overrideColor ?? (lines.IndexOf(line) == 0 ? item.expert || item.rare == -12 ? new Color(DiscoR, DiscoG, DiscoB) : item.rare >= 11 ? new Color(180, 40, 255) : rarityColors.TryGetValue(item.rare, out Color value) ? value : Color.White : Color.White)), 0, Vector2.Zero, Vector2.One);
 
                 if(lines.IndexOf(line) == offsetIndex && !line.Equals(lines.Last()))
-                    y = (config.sprite ? Math.Max(y + lineHeight, spriteY + max) : y + lineHeight) + config.spacing;
+                    y = Math.Max(y + lineHeight, spriteY + max) + config.spacing;
 
                 y += (lineHeight + config.spacing) * (lines.IndexOf(line) == lines.ToList().FindIndex(l => l.isModifier) - 1 && !line.Equals(lines.Last()) ? 2 : 1);
             }
@@ -182,8 +182,8 @@
             if(config.modName)
                 name.text += item.modItem?.mod.DisplayName.Insert(0, " - ");
 
-            if(config.VelocityLine.A > 0 && item.shootSpeed > 0)
-                lines.Insert(lines.IndexOf(knockback ?? speed ?? critChance ?? damage ?? name) + 1, new TooltipLine(mod, "Velocity", item.shootSpeed + (currentAmmo != null && config.wpnPlusAmmoVelocity ? currentAmmo.shootSpeed : 0) + " velocity") { overrideColor = config.VelocityLine });
+            if(config.velocityLine.A > 0 && item.shootSpeed > 0)
+                lines.Insert(lines.IndexOf(knockback ?? speed ?? critChance ?? damage ?? name) + 1, new TooltipLine(mod, "Velocity", item.shootSpeed + (currentAmmo != null && config.wpnPlusAmmoVelocity ? currentAmmo.shootSpeed : 0) + " velocity") { overrideColor = config.velocityLine });
 
             if(config.ammoLine && (item.useAmmo > 0 || item.fishingPole > 0 || item.tileWand > 0))
             {
