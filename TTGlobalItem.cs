@@ -16,6 +16,8 @@ namespace TrueTooltips;
 
 internal class TTGlobalItem : GlobalItem
 {
+    private static Color priceColor;
+
     private Color RarityColor(Item item, TooltipLine line = null) => line switch
     {
         { OverrideColor: not null } => line.OverrideColor.Value,
@@ -29,6 +31,7 @@ internal class TTGlobalItem : GlobalItem
         { IsModifier: true, IsModifierBad: false } => new(120, 190, 120),
         { IsModifierBad: true } => new(190, 120, 120),
         { Name: "JourneyResearch", Mod: "Terraria" } => new(255, 120, 187),
+        { Name: "Price", Mod: "Terraria" } => priceColor,
         _ => Color.White
     };
 
@@ -364,7 +367,7 @@ internal class TTGlobalItem : GlobalItem
 
         if(itemAmmo != null && config.ItemAmmo) lines.Add(new TooltipLine(Mod, "ItemAmmo", itemAmmo.HoverName + ((keyState.PressingShift() || config.ItemModAlways) && itemAmmo.ModItem != null && config.ItemMod ? " - " + itemAmmo.ModItem.Mod.DisplayName : string.Empty)) { OverrideColor = RarityColor(itemAmmo) });
 
-        if(item.shopSpecialCurrency == -1 && (item.type < 71 || item.type > 74) && config.BetterPrice)
+        if(item.shopSpecialCurrency == -1 && (item.type < 71 || item.type > 74) && config.Price)
         {
             player.GetItemExpectedPrice(item, out int calcForSelling, out int calcForBuying);
 
@@ -385,17 +388,30 @@ internal class TTGlobalItem : GlobalItem
                     if(amount > 0) value2 += (calcForBuying - temp) * Math.Min(amount, item.stack);
                 }
 
-                int platinum = value2 / 1_000_000,
-                    gold = value2 / 10000 % 100,
-                    silver = value2 / 100 % 100,
-                    copper = value2 % 100;
+                if(config.BetterPrice)
+                {
+                    int platinum = value2 / 1_000_000,
+                        gold = value2 / 10000 % 100,
+                        silver = value2 / 100 % 100,
+                        copper = value2 % 100;
 
-                lines.Add(new TooltipLine(Mod, "BetterPrice", ((platinum > 0 ? $"[c/{TextPulse(CoinPlatinum).Hex3()}:{platinum} {Lang.inter[15].Value} ]" : string.Empty) + (gold > 0 ? $"[c/{TextPulse(CoinGold).Hex3()}:{gold} {Lang.inter[16].Value} ]" : string.Empty) + (silver > 0 ? $"[c/{TextPulse(CoinSilver).Hex3()}:{silver} {Lang.inter[17].Value} ]" : string.Empty) + (copper > 0 ? $"[c/{TextPulse(CoinCopper).Hex3()}:{copper} {Lang.inter[18].Value}]" : string.Empty)).TrimEnd()));
+                    lines.Add(new TooltipLine(Mod, "BetterPrice", ((platinum > 0 ? $"[c/{TextPulse(CoinPlatinum).Hex3()}:{platinum} {Lang.inter[15].Value} ]" : string.Empty) + (gold > 0 ? $"[c/{TextPulse(CoinGold).Hex3()}:{gold} {Lang.inter[16].Value} ]" : string.Empty) + (silver > 0 ? $"[c/{TextPulse(CoinSilver).Hex3()}:{silver} {Lang.inter[17].Value} ]" : string.Empty) + (copper > 0 ? $"[c/{TextPulse(CoinCopper).Hex3()}:{copper} {Lang.inter[18].Value}]" : string.Empty)).TrimEnd()));
+                }
+
+                priceColor = value2 switch
+                {
+                    >= 1_000_000 => CoinPlatinum,
+                    >= 10000 => CoinGold,
+                    >= 100 => CoinSilver,
+                    _ => CoinCopper
+                };
+
             }
+            else if(item.type != 3817) priceColor = new Color(120, 120, 120);
         }
 
         if(specialPrice != null && !config.SpecialPrice) lines.Remove(specialPrice);
-        if(price != null && (value > 0 || !config.Price)) lines.Remove(price);
+        if(price != null && (value > 0 && config.BetterPrice || !config.Price)) lines.Remove(price);
     }
 
     public override bool PreDrawTooltip(Item item, ReadOnlyCollection<TooltipLine> lines, ref int _x, ref int _y)
@@ -420,12 +436,7 @@ internal class TTGlobalItem : GlobalItem
         _x += config.XOffset;
         _y += config.YOffset;
 
-        if((keyState.PressingShift() || config.SpriteAlways) && config.Sprite)
-        {
-            offsetFromSprite = Math.Max(spriteRect.Width, spriteRect.Height) + 14;
-
-            _x += offsetFromSprite;
-        }
+        if((keyState.PressingShift() || config.SpriteAlways) && config.Sprite) offsetFromSprite = max - (max - spriteRect.Width) % 2 + 14;
 
         if(config.Background.A > 0)
         {
@@ -436,9 +447,9 @@ internal class TTGlobalItem : GlobalItem
             _y += 2;
 
             bgRight = 14 + (config.BGXOffset + config.BGPaddingRight >= -13 ? config.BGXOffset + config.BGPaddingRight : 0);
-            bgLeft = 14 + (config.BGXOffset <= 13 ? config.BGXOffset : 0);
+            bgLeft = 14 - (config.BGXOffset <= 13 ? config.BGXOffset : 0);
             bgBottom = 4 + (config.BGYOffset + config.BGPaddingBottom >= -3 ? config.BGYOffset + config.BGPaddingBottom : 0);
-            bgTop = 9 + (config.BGYOffset <= 8 ? config.BGYOffset : 0);
+            bgTop = 9 - (config.BGYOffset <= 8 ? config.BGYOffset : 0);
         }
 
         if(ThickMouse)
@@ -455,8 +466,11 @@ internal class TTGlobalItem : GlobalItem
 
             if(stringSize.X + offsetFromSprite > width) width = (int)stringSize.X + offsetFromSprite;
 
-            height += (int)stringSize.Y + config.Spacing;
+            if(line.Name == "OneDropLogo" && line.Mod == "Terraria") height += 24 + config.Spacing;
+            else height += (int)stringSize.Y + config.Spacing;
         }
+
+        height = Math.Max(height, max - (max - spriteRect.Height) % 2);
 
         if(x + width + bgRight > screenWidth) x = _x = screenWidth - width - bgRight;
         if(x - bgLeft < 0) x = _x = bgLeft;
@@ -464,7 +478,13 @@ internal class TTGlobalItem : GlobalItem
         if(y - bgTop < 0) y = _y = bgTop;
 
         if(config.Background.A > 0) Utils.DrawInvBG(spriteBatch, new Rectangle(x + config.BGXOffset - 14, y + config.BGYOffset - 9, width + config.BGPaddingRight + 28, height + config.BGPaddingBottom + 13), config.Background);
-        if(offsetFromSprite > 0) spriteBatch.Draw(sprite, new Vector2(x + (max - spriteRect.Width) / 2, y + (max - spriteRect.Height) / 2), spriteRect, Color.White);
+
+        if(offsetFromSprite > 0)
+        {
+            _x += offsetFromSprite;
+
+            spriteBatch.Draw(sprite, new Vector2(x + (max - spriteRect.Width - (max - spriteRect.Width) % 2) / 2, y + (max - spriteRect.Height - (max - spriteRect.Height) % 2) / 2), spriteRect, Color.White);
+        }
 
         height = 0;
 
@@ -474,11 +494,14 @@ internal class TTGlobalItem : GlobalItem
             {
                 spriteBatch.Draw(TextureAssets.OneDropLogo.Value, new Vector2(x + offsetFromSprite, y + height), TextPulse(RarityColor(item, line)));
 
-                height += 24;
+                height += 24 + config.Spacing;
             }
-            else ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, line.Text, new Vector2(x + offsetFromSprite, y + height), TextPulse(RarityColor(item, line)), 0, Vector2.Zero, Vector2.One, -1, 2);
+            else
+            {
+                ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, line.Text, new Vector2(x + offsetFromSprite, y + height), TextPulse(RarityColor(item, line)), 0, Vector2.Zero, Vector2.One, -1, 2);
 
-            height += (int)StringSize(line.Text).Y + config.Spacing;
+                height += (int)StringSize(line.Text).Y + config.Spacing;
+            }
         }
 
         return SettingsEnabled_OpaqueBoxBehindTooltips = false;
