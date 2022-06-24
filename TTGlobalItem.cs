@@ -25,7 +25,7 @@ internal class TTGlobalItem : GlobalItem
         {
             { rare: 0 } => Color.White,
             { expert: true } => new(DiscoR, DiscoG, DiscoB),
-            { master: true } => new(255, masterColor * 200, 0),
+            { master: true } => new(255, (byte)(masterColor * 200), 0),
             _ => Terraria.GameContent.UI.ItemRarity.GetColor(item.rare)
         },
         { IsModifier: true, IsModifierBad: false } => new(120, 190, 120),
@@ -169,7 +169,7 @@ internal class TTGlobalItem : GlobalItem
             else
             {
                 if(config.Knockback.Color != Color.White) knockback.OverrideColor = config.Knockback.Color;
-                if(config.BetterKnockback) knockback.Text = Math.Round(player.GetWeaponKnockback(item, item.knockBack) + (itemAmmo != null && config.WpnPlusAmmoDmg ? player.GetWeaponKnockback(itemAmmo, itemAmmo.knockBack) : 0), 2) + Language.GetTextValue("Mods.TrueTooltips.TTGlobalItem.Knockback");
+                if(config.BetterKnockback) knockback.Text = Math.Round(player.GetWeaponKnockback(item, item.knockBack) + (itemAmmo != null && config.WpnPlusAmmoKb ? player.GetWeaponKnockback(itemAmmo, itemAmmo.knockBack) : 0), 2) + Language.GetTextValue("Mods.TrueTooltips.TTGlobalItem.Knockback");
             }
         }
 
@@ -446,9 +446,9 @@ internal class TTGlobalItem : GlobalItem
             _x += 8;
             _y += 2;
 
-            bgRight = 14 + (config.BGXOffset + config.BGPaddingRight >= -13 ? config.BGXOffset + config.BGPaddingRight : 0);
+            bgRight = 13 + (config.BGXOffset + config.BGPaddingRight >= -12 ? config.BGXOffset + config.BGPaddingRight : 0);
             bgLeft = 14 - (config.BGXOffset <= 13 ? config.BGXOffset : 0);
-            bgBottom = 4 + (config.BGYOffset + config.BGPaddingBottom >= -3 ? config.BGYOffset + config.BGPaddingBottom : 0);
+            bgBottom = 3 + (config.BGYOffset + config.BGPaddingBottom >= -2 ? config.BGYOffset + config.BGPaddingBottom : 0);
             bgTop = 9 - (config.BGYOffset <= 8 ? config.BGYOffset : 0);
         }
 

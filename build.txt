@@ -1,5 +1,5 @@
 author = Graumen
 displayName = True Tooltips
-homepage = https://forums.terraria.org/index.php?threads/true-tooltips.89106/
+homepage = https://github.com/Graumen/TrueTooltips
 side = Client
-version = 1.4
+version = 1.4.0.1

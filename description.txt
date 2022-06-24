@@ -3,7 +3,9 @@ True Tooltips is a highly customizable tooltip-enhancing mod. All features can b
 
 [c/ffff00:Features]
 
-- Lets you turn off- and change the color of almost all vanilla tooltip lines.
+- Lets you turn off almost all vanilla tooltip lines.
+
+- Lets you change the color of almost all vanilla tooltip lines.
 
 - Shows the item's sprite in the tooltip always, or only when holding SHIFT, alternatively.
 
