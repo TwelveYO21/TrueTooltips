@@ -2,6 +2,7 @@
 global using Terraria.ModLoader;
 global using static Terraria.Main;
 global using static Terraria.ModLoader.ModContent;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -417,9 +418,26 @@ internal class TTGlobalItem : GlobalItem
     public override bool PreDrawTooltip(Item item, ReadOnlyCollection<TooltipLine> lines, ref int _x, ref int _y)
     {
         Config config = GetInstance<Config>();
-        Microsoft.Xna.Framework.Graphics.Texture2D sprite = TextureAssets.Item[item.type].Value;
+        Texture2D sprite = TextureAssets.Item[item.type].Value;
         Rectangle spriteRect = itemAnimations[item.type]?.GetFrame(sprite) ?? sprite.Frame();
-
+        /*
+        DepthStencilState state1 = new()
+        {
+            StencilEnable = true,
+            StencilFunction = CompareFunction.Always,
+            StencilPass = StencilOperation.Replace,
+            ReferenceStencil = 1,
+            DepthBufferEnable = false
+        },
+        state2 = new()
+        {
+            StencilEnable = true,
+            StencilFunction = CompareFunction.LessEqual,
+            StencilPass = StencilOperation.Keep,
+            ReferenceStencil = 1,
+            DepthBufferEnable = false
+        };
+        */
         int x = mouseX + config.XOffset + 20,
             y = mouseY + config.YOffset + 20,
             width = 0,
@@ -433,6 +451,13 @@ internal class TTGlobalItem : GlobalItem
 
         static Vector2 StringSize(string text) => ChatManager.GetStringSize(FontAssets.MouseText.Value, text, Vector2.One);
 
+        //graphics.PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8;
+        /*
+        AlphaTestEffect alphaTestEffect = new(graphics.GraphicsDevice)
+        {
+            Projection = UIScaleMatrix
+        };
+        */
         _x += config.XOffset;
         _y += config.YOffset;
 
@@ -476,14 +501,34 @@ internal class TTGlobalItem : GlobalItem
         if(x - bgLeft < 0) x = _x = bgLeft;
         if(y + height + bgBottom > screenHeight) y = _y = screenHeight - height - bgBottom;
         if(y - bgTop < 0) y = _y = bgTop;
-
+        /*
+        spriteBatch.End();
+        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerStateForCursor, state1, RasterizerState.CullCounterClockwise, alphaTestEffect, UIScaleMatrix);
+        */
         if(config.Background.A > 0) Utils.DrawInvBG(spriteBatch, new Rectangle(x + config.BGXOffset - 14, y + config.BGYOffset - 9, width + config.BGPaddingRight + 28, height + config.BGPaddingBottom + 13), config.Background);
 
         if(offsetFromSprite > 0)
         {
-            _x += offsetFromSprite;
+            Color color = Color.White;
+            float scale = 1f;
 
-            spriteBatch.Draw(sprite, new Vector2(x + (max - spriteRect.Width - (max - spriteRect.Width) % 2) / 2, y + (max - spriteRect.Height - (max - spriteRect.Height) % 2) / 2), spriteRect, Color.White);
+            void Draw(Color color) => spriteBatch.Draw(sprite, new Vector2(x + (max - spriteRect.Width - (max - spriteRect.Width) % 2) / 2, y + (max - spriteRect.Height - (max - spriteRect.Height) % 2) / 2), spriteRect, color, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+
+            _x += offsetFromSprite;
+            /*
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerStateForCursor, state2, RasterizerState.CullCounterClockwise, alphaTestEffect, UIScaleMatrix);
+
+            Utils.DrawInvBG(spriteBatch, new Rectangle(x, y, max, max), config.SprieBG);
+
+            spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerStateForCursor, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, UIScaleMatrix);
+            */
+            Terraria.UI.ItemSlot.GetItemLight(ref color, ref scale, item);
+
+            Draw(item.GetAlpha(color));
+
+            if(item.color != Color.Transparent) Draw(item.GetColor(Color.White));
         }
 
         height = 0;
@@ -504,6 +549,6 @@ internal class TTGlobalItem : GlobalItem
             }
         }
 
-        return SettingsEnabled_OpaqueBoxBehindTooltips = false;
+        return false;
     }
 }

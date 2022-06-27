@@ -23,7 +23,7 @@ True Tooltips is a highly customizable tooltip-enhancing mod. All features can b
 
 - Improves the vanilla price tooltip line to always be visible, have individual colors for different coins and be less redundant.
 
-- Improves the vanilla speed tooltip line to show attacks per second instead of, e.g., "Fast speed".
+- Improves the vanilla speed tooltip line to show uses per second instead of, e.g., "Fast speed".
 
 - Improves the vanilla knockback tooltip line to show a numeric value instead of, e.g., "Strong knockback", and shows the combined knockback of the weapon and its ammo if "Better Knockback" is on.
 

@@ -29,7 +29,7 @@ Mods:
             BetterPrice: Better Price
             BetterPriceTooltip: Improves the vanilla price tooltip line to always be visible, have individual colors for different coins and be less redundant
             BetterSpeed: Better Speed
-            BetterSpeedTooltip: Improves the vanilla speed tooltip line to show attacks per second instead of, e.g., "{$LegacyTooltip.8}"
+            BetterSpeedTooltip: Improves the vanilla speed tooltip line to show uses per second instead of, e.g., "{$LegacyTooltip.8}"
             BetterKnockback: Better Knockback
             BetterKnockbackTooltip: Improves the vanilla knockback tooltip line to show a numeric value instead of, e.g., "{$LegacyTooltip.19}"
             WpnPlusAmmoDmg: Weapon + Ammo Damage
@@ -68,7 +68,7 @@ Mods:
 
         TTGlobalItem:
         {
-            Speed: " attacks per second"
+            Speed: " uses per second"
             Knockback: " knockback"
         }
     }
