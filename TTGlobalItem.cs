@@ -19,14 +19,14 @@ internal class TTGlobalItem : GlobalItem
 {
     private static Color priceColor;
 
-    private Color RarityColor(Item item, TooltipLine line = null) => line switch
+    private static Color RarityColor(Item item, TooltipLine line = null) => line switch
     {
         { OverrideColor: not null } => line.OverrideColor.Value,
         { Name: "ItemName", Mod: "Terraria" } or null => item switch
         {
             { rare: 0 } => Color.White,
             { expert: true } => new(DiscoR, DiscoG, DiscoB),
-            { master: true } => new(255, (byte)(masterColor * 200), 0),
+            { master: true } => new(255, (int)(masterColor * 200f), 0),
             _ => Terraria.GameContent.UI.ItemRarity.GetColor(item.rare)
         },
         { IsModifier: true, IsModifierBad: false } => new(120, 190, 120),
@@ -36,7 +36,7 @@ internal class TTGlobalItem : GlobalItem
         _ => Color.White
     };
 
-    private Color TextPulse(Color color) => new(color.R * mouseTextColor / 255, color.G * mouseTextColor / 255, color.B * mouseTextColor / 255, mouseTextColor);
+    private static Color TextPulse(Color color) => new(color.R * mouseTextColor / 255, color.G * mouseTextColor / 255, color.B * mouseTextColor / 255, mouseTextColor);
 
     public override void ModifyTooltips(Item item, List<TooltipLine> lines)
     {
@@ -94,7 +94,7 @@ internal class TTGlobalItem : GlobalItem
 
         if(item.useAmmo > 0 && (config.ItemAmmo || config.WpnPlusAmmoDmg || config.WpnPlusAmmoKb && config.BetterKnockback)) itemAmmo = player.ChooseAmmo(item);
 
-        if((keyState.PressingShift() || config.ItemModAlways) && item.ModItem != null && config.ItemMod && itemName != null) itemName.Text += " - " + item.ModItem.Mod.DisplayName;
+        if((keyState.PressingShift() && config.ItemMod == Config.State.Shift || config.ItemMod == Config.State.Always) && item.ModItem != null && itemName != null) itemName.Text += " - " + item.ModItem.Mod.DisplayName;
 
         if(favorite != null)
         {
@@ -132,7 +132,7 @@ internal class TTGlobalItem : GlobalItem
             else
             {
                 if(config.Damage.Color != Color.White) damage.OverrideColor = config.Damage.Color;
-                if(itemAmmo != null && config.WpnPlusAmmoDmg) damage.Text = Regex.Replace(damage.Text, @"^\d+", (player.GetWeaponDamage(item, true) + player.GetWeaponDamage(itemAmmo, true)).ToString());
+                if(itemAmmo != null && config.WpnPlusAmmoDmg) damage.Text = Regex.Replace(damage.Text, @"^\d+", keyState.PressingShift() && config.AmmoDmgKbSeparate == Config.State.Shift || config.AmmoDmgKbSeparate == Config.State.Always ? player.GetWeaponDamage(item, true) + " + " + player.GetWeaponDamage(itemAmmo, true) : (player.GetWeaponDamage(item, true) + player.GetWeaponDamage(itemAmmo, true)).ToString());
             }
         }
 
@@ -148,7 +148,7 @@ internal class TTGlobalItem : GlobalItem
             else
             {
                 if(config.Speed.Color != Color.White) speed.OverrideColor = config.Speed.Color;
-                if(config.BetterSpeed) speed.Text = Math.Round(60f / item.useAnimation, 2) + Language.GetTextValue("Mods.TrueTooltips.TTGlobalItem.Speed");
+                if(config.BetterSpeed) speed.Text = Math.Round(60d / item.useAnimation, 2) + Language.GetTextValue("Mods.TrueTooltips.TTGlobalItem.Speed");
             }
         }
 
@@ -170,7 +170,7 @@ internal class TTGlobalItem : GlobalItem
             else
             {
                 if(config.Knockback.Color != Color.White) knockback.OverrideColor = config.Knockback.Color;
-                if(config.BetterKnockback) knockback.Text = Math.Round(player.GetWeaponKnockback(item, item.knockBack) + (itemAmmo != null && config.WpnPlusAmmoKb ? player.GetWeaponKnockback(itemAmmo, itemAmmo.knockBack) : 0), 2) + Language.GetTextValue("Mods.TrueTooltips.TTGlobalItem.Knockback");
+                if(config.BetterKnockback) knockback.Text = ((keyState.PressingShift() && config.AmmoDmgKbSeparate == Config.State.Shift || config.AmmoDmgKbSeparate == Config.State.Always) && itemAmmo != null && config.WpnPlusAmmoKb ? Math.Round(player.GetWeaponKnockback(item, item.knockBack), 2) + " + " + Math.Round(player.GetWeaponKnockback(itemAmmo, itemAmmo.knockBack), 2) : Math.Round(player.GetWeaponKnockback(item, item.knockBack) + (itemAmmo != null && config.WpnPlusAmmoKb ? player.GetWeaponKnockback(itemAmmo, itemAmmo.knockBack) : 0), 2)) + Language.GetTextValue("Mods.TrueTooltips.TTGlobalItem.Knockback");
             }
         }
 
@@ -366,7 +366,7 @@ internal class TTGlobalItem : GlobalItem
             else if(config.BestiaryNotes.Color != Color.White) bestiaryNotes.OverrideColor = config.BestiaryNotes.Color;
         }
 
-        if(itemAmmo != null && config.ItemAmmo) lines.Add(new TooltipLine(Mod, "ItemAmmo", itemAmmo.HoverName + ((keyState.PressingShift() || config.ItemModAlways) && itemAmmo.ModItem != null && config.ItemMod ? " - " + itemAmmo.ModItem.Mod.DisplayName : string.Empty)) { OverrideColor = RarityColor(itemAmmo) });
+        if(itemAmmo != null && config.ItemAmmo) lines.Add(new TooltipLine(Mod, "ItemAmmo", itemAmmo.HoverName + ((keyState.PressingShift() && config.ItemMod == Config.State.Shift || config.ItemMod == Config.State.Always) && itemAmmo.ModItem != null ? " - " + itemAmmo.ModItem.Mod.DisplayName : string.Empty)) { OverrideColor = RarityColor(itemAmmo) });
 
         if(item.shopSpecialCurrency == -1 && (item.type < 71 || item.type > 74) && config.Price)
         {
@@ -420,24 +420,6 @@ internal class TTGlobalItem : GlobalItem
         Config config = GetInstance<Config>();
         Texture2D sprite = TextureAssets.Item[item.type].Value;
         Rectangle spriteRect = itemAnimations[item.type]?.GetFrame(sprite) ?? sprite.Frame();
-        /*
-        DepthStencilState state1 = new()
-        {
-            StencilEnable = true,
-            StencilFunction = CompareFunction.Always,
-            StencilPass = StencilOperation.Replace,
-            ReferenceStencil = 1,
-            DepthBufferEnable = false
-        },
-        state2 = new()
-        {
-            StencilEnable = true,
-            StencilFunction = CompareFunction.LessEqual,
-            StencilPass = StencilOperation.Keep,
-            ReferenceStencil = 1,
-            DepthBufferEnable = false
-        };
-        */
         int x = mouseX + config.XOffset + 20,
             y = mouseY + config.YOffset + 20,
             width = 0,
@@ -451,30 +433,22 @@ internal class TTGlobalItem : GlobalItem
 
         static Vector2 StringSize(string text) => ChatManager.GetStringSize(FontAssets.MouseText.Value, text, Vector2.One);
 
-        //graphics.PreferredDepthStencilFormat = DepthFormat.Depth24Stencil8;
-        /*
-        AlphaTestEffect alphaTestEffect = new(graphics.GraphicsDevice)
-        {
-            Projection = UIScaleMatrix
-        };
-        */
-        _x += config.XOffset;
-        _y += config.YOffset;
+        _x += config.XOffset + config.TextXOffset;
+        _y += config.YOffset + config.TextYOffset;
 
-        if((keyState.PressingShift() || config.SpriteAlways) && config.Sprite) offsetFromSprite = max - (max - spriteRect.Width) % 2 + 14;
+        if(config.Sprite == Config.State.Always || keyState.PressingShift() && config.Sprite == Config.State.Shift) offsetFromSprite = max - (max - spriteRect.Width) % 2 + 14;
 
         if(config.Background.A > 0)
         {
-            x += 8;
-            y += 2;
+            x += 4;
+            y += 4;
+            _x += 4;
+            _y += 4;
 
-            _x += 8;
-            _y += 2;
-
-            bgRight = 13 + (config.BGXOffset + config.BGPaddingRight >= -12 ? config.BGXOffset + config.BGPaddingRight : 0);
-            bgLeft = 14 - (config.BGXOffset <= 13 ? config.BGXOffset : 0);
-            bgBottom = 3 + (config.BGYOffset + config.BGPaddingBottom >= -2 ? config.BGYOffset + config.BGPaddingBottom : 0);
-            bgTop = 9 - (config.BGYOffset <= 8 ? config.BGYOffset : 0);
+            bgRight = Math.Max(config.BGXOffset + config.BGPaddingRight + 13, 0);
+            bgLeft = Math.Min(config.BGXOffset - 14, 0);
+            bgBottom = Math.Max(config.BGYOffset + config.BGPaddingBottom + 13, 0);
+            bgTop = Math.Min(config.BGYOffset - 14, 0);
         }
 
         if(ThickMouse)
@@ -489,23 +463,21 @@ internal class TTGlobalItem : GlobalItem
         {
             Vector2 stringSize = StringSize(line.Text);
 
-            if(stringSize.X + offsetFromSprite > width) width = (int)stringSize.X + offsetFromSprite;
+            if(stringSize.X > width) width = (int)stringSize.X;
 
             if(line.Name == "OneDropLogo" && line.Mod == "Terraria") height += 24 + config.Spacing;
             else height += (int)stringSize.Y + config.Spacing;
         }
 
-        height = Math.Max(height, max - (max - spriteRect.Height) % 2);
+        height += config.TextYOffset;
+        if(offsetFromSprite > 0) height = Math.Max(height, max - (max - spriteRect.Height) % 2);
 
-        if(x + width + bgRight > screenWidth) x = _x = screenWidth - width - bgRight;
-        if(x - bgLeft < 0) x = _x = bgLeft;
+        if(x + width + offsetFromSprite + bgRight + config.TextXOffset > screenWidth) x = _x = screenWidth - width - offsetFromSprite - bgRight - config.TextXOffset;
+        if(x + bgLeft < 0) x = _x = -bgLeft;
         if(y + height + bgBottom > screenHeight) y = _y = screenHeight - height - bgBottom;
-        if(y - bgTop < 0) y = _y = bgTop;
-        /*
-        spriteBatch.End();
-        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerStateForCursor, state1, RasterizerState.CullCounterClockwise, alphaTestEffect, UIScaleMatrix);
-        */
-        if(config.Background.A > 0) Utils.DrawInvBG(spriteBatch, new Rectangle(x + config.BGXOffset - 14, y + config.BGYOffset - 9, width + config.BGPaddingRight + 28, height + config.BGPaddingBottom + 13), config.Background);
+        if(y + bgTop < 0) y = _y = -bgTop;
+
+        if(config.Background.A > 0) Utils.DrawInvBG(spriteBatch, new Rectangle(x + config.BGXOffset - 14, y + config.BGYOffset - 14, width + offsetFromSprite + config.TextXOffset + config.BGPaddingRight + 28, height + config.BGPaddingBottom + 28), config.Background);
 
         if(offsetFromSprite > 0)
         {
@@ -515,21 +487,13 @@ internal class TTGlobalItem : GlobalItem
             void Draw(Color color) => spriteBatch.Draw(sprite, new Vector2(x + (max - spriteRect.Width - (max - spriteRect.Width) % 2) / 2, y + (max - spriteRect.Height - (max - spriteRect.Height) % 2) / 2), spriteRect, color, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 
             _x += offsetFromSprite;
-            /*
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerStateForCursor, state2, RasterizerState.CullCounterClockwise, alphaTestEffect, UIScaleMatrix);
 
-            Utils.DrawInvBG(spriteBatch, new Rectangle(x, y, max, max), config.SprieBG);
-
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerStateForCursor, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, UIScaleMatrix);
-            */
             Terraria.UI.ItemSlot.GetItemLight(ref color, ref scale, item);
-
             Draw(item.GetAlpha(color));
-
             if(item.color != Color.Transparent) Draw(item.GetColor(Color.White));
         }
+
+        //spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerStateForCursor, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, UIScaleMatrix);
 
         height = 0;
 
@@ -537,14 +501,12 @@ internal class TTGlobalItem : GlobalItem
         {
             if(line.Name == "OneDropLogo" && line.Mod == "Terraria")
             {
-                spriteBatch.Draw(TextureAssets.OneDropLogo.Value, new Vector2(x + offsetFromSprite, y + height), TextPulse(RarityColor(item, line)));
-
+                spriteBatch.Draw(TextureAssets.OneDropLogo.Value, new Vector2(x + config.TextXOffset + offsetFromSprite, y + config.TextYOffset + height), TextPulse(RarityColor(item, line)));
                 height += 24 + config.Spacing;
             }
             else
             {
-                ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, line.Text, new Vector2(x + offsetFromSprite, y + height), TextPulse(RarityColor(item, line)), 0, Vector2.Zero, Vector2.One, -1, 2);
-
+                ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, line.Text, new Vector2(x + config.TextXOffset + offsetFromSprite, y + config.TextYOffset + height), TextPulse(RarityColor(item, line)), 0f, Vector2.Zero, Vector2.One, -1f, 2f);
                 height += (int)StringSize(line.Text).Y + config.Spacing;
             }
         }

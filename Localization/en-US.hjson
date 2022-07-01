@@ -11,10 +11,11 @@ Mods:
             BGYOffset: Background Y Offset
             BGPaddingRight: Background Right Padding
             BGPaddingBottom: Background Bottom Padding
+            TextXOffset: Text X Offset
+            TextYOffset: Text Y Offset
             Spacing: Line Spacing
             Sprite: Sprite
-            SpriteAlways: Always show item's sprite
-            SpriteAlwaysTooltip: Hold SHIFT to show the sprite when this is off
+            SpriteTooltip: Shows the item's sprite in the tooltip always, or only when holding SHIFT, alternatively
             TextPulse: Text Pulse
             #VanillaOrder: Vanilla Line Order
 
@@ -24,8 +25,6 @@ Mods:
             ItemAmmoTooltip: Adds a tooltip line showing the item's ammo, as well as the mod adding the ammo when "Item Mod" is on
             ItemMod: Item Mod
             ItemModTooltip: Shows the mod adding the item when holding SHIFT, or always, alternatively
-            ItemModAlways: Always show item's mod
-            ItemModAlwaysTooltip: Hold SHIFT to show the mod when this is off
             BetterPrice: Better Price
             BetterPriceTooltip: Improves the vanilla price tooltip line to always be visible, have individual colors for different coins and be less redundant
             BetterSpeed: Better Speed
@@ -36,6 +35,8 @@ Mods:
             WpnPlusAmmoDmgTooltip: Improves the vanilla damage tooltip line to show the combined damage of the weapon and its ammo
             WpnPlusAmmoKb: Weapon + Ammo Knockback
             WpnPlusAmmoKbTooltip: Makes the knockback tooltip line show the combined knockback of the weapon and its ammo if "Better Knockback" is on
+            AmmoDmgKbSeparate: Ammo Damage & Ammo Knockback Separate
+            AmmoDmgKbSeparateTooltip: Show ammo damage & ammo knockback separately when holding SHIFT, or always, alternatively
 
             Header2: Vanilla Tooltip Lines
 

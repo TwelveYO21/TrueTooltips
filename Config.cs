@@ -18,6 +18,13 @@ internal class Config : ModConfig
         public Color Color = Color.White;
     }
 
+    public enum State
+    {
+        Always,
+        Shift,
+        Off
+    }
+
     [Label("$Mods.TrueTooltips.Config.XOffset")]
     [Range(int.MinValue, int.MaxValue)]
     public int XOffset;
@@ -46,18 +53,22 @@ internal class Config : ModConfig
     [Range(int.MinValue, int.MaxValue)]
     public int BGPaddingBottom;
 
+    [Label("$Mods.TrueTooltips.Config.TextXOffset")]
+    [Range(int.MinValue, int.MaxValue)]
+    public int TextXOffset;
+
+    [Label("$Mods.TrueTooltips.Config.TextYOffset")]
+    [Range(int.MinValue, int.MaxValue)]
+    public int TextYOffset;
+
     [Label("$Mods.TrueTooltips.Config.Spacing")]
     [Range(int.MinValue, int.MaxValue)]
     public int Spacing;
 
     [Label("$Mods.TrueTooltips.Config.Sprite")]
-    [DefaultValue(true)]
-    public bool Sprite;
-
-    [Label("$Mods.TrueTooltips.Config.SpriteAlways")]
-    [Tooltip("$Mods.TrueTooltips.Config.SpriteAlwaysTooltip")]
-    [DefaultValue(true)]
-    public bool SpriteAlways;
+    [Tooltip("$Mods.TrueTooltips.Config.SpriteTooltip")]
+    [DefaultValue(State.Always)]
+    public State Sprite;
 
     [Label("$Mods.TrueTooltips.Config.TextPulse")]
     public bool TextPulse;
@@ -74,12 +85,8 @@ internal class Config : ModConfig
 
     [Label("$Mods.TrueTooltips.Config.ItemMod")]
     [Tooltip("$Mods.TrueTooltips.Config.ItemModTooltip")]
-    [DefaultValue(true)]
-    public bool ItemMod;
-
-    [Label("$Mods.TrueTooltips.Config.ItemModAlways")]
-    [Tooltip("$Mods.TrueTooltips.Config.ItemModAlwaysTooltip")]
-    public bool ItemModAlways;
+    [DefaultValue(State.Shift)]
+    public State ItemMod;
 
     [Label("$Mods.TrueTooltips.Config.BetterPrice")]
     [Tooltip("$Mods.TrueTooltips.Config.BetterPriceTooltip")]
@@ -105,6 +112,11 @@ internal class Config : ModConfig
     [Tooltip("$Mods.TrueTooltips.Config.WpnPlusAmmoKbTooltip")]
     [DefaultValue(true)]
     public bool WpnPlusAmmoKb;
+
+    [Label("$Mods.TrueTooltips.Config.AmmoDmgKbSeparate")]
+    [Tooltip("$Mods.TrueTooltips.Config.AmmoDmgKbSeparateTooltip")]
+    [DefaultValue(State.Shift)]
+    public State AmmoDmgKbSeparate;
 
     [Header("$Mods.TrueTooltips.Config.Header2")]
 
