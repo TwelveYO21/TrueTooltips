@@ -25,8 +25,8 @@ internal class TTGlobalItem : GlobalItem
         { Name: "ItemName", Mod: "Terraria" } or null => item switch
         {
             { rare: 0 } => Color.White,
-            { expert: true } => new(DiscoR, DiscoG, DiscoB),
-            { master: true } => new(255, (int)(masterColor * 200f), 0),
+            { expert: true } or { rare: -12 } => new(DiscoR, DiscoG, DiscoB),
+            { master: true } or { rare: -13 } => new(255, (int)(masterColor * 200f), 0),
             _ => Terraria.GameContent.UI.ItemRarity.GetColor(item.rare)
         },
         { IsModifier: true, IsModifierBad: false } => new(120, 190, 120),
@@ -46,6 +46,7 @@ internal class TTGlobalItem : GlobalItem
         int value = 0;
 
         TooltipLine Find(string name) => lines.Find(l => l.Name == name);
+        static string Translation(string key) => Language.GetTextValue("Mods.TrueTooltips.TTGlobalItem." + key);
 
         TooltipLine itemName = Find("ItemName"),
                     favorite = Find("Favorite"),
@@ -148,7 +149,7 @@ internal class TTGlobalItem : GlobalItem
             else
             {
                 if(config.Speed.Color != Color.White) speed.OverrideColor = config.Speed.Color;
-                if(config.BetterSpeed) speed.Text = Math.Round(60d / item.useAnimation, 2) + Language.GetTextValue("Mods.TrueTooltips.TTGlobalItem.Speed");
+                if(config.BetterSpeed) speed.Text = Math.Round(60d / item.useAnimation, 2) + Translation("Speed");
             }
         }
 
@@ -170,7 +171,7 @@ internal class TTGlobalItem : GlobalItem
             else
             {
                 if(config.Knockback.Color != Color.White) knockback.OverrideColor = config.Knockback.Color;
-                if(config.BetterKnockback) knockback.Text = ((keyState.PressingShift() && config.AmmoDmgKbSeparate == Config.State.Shift || config.AmmoDmgKbSeparate == Config.State.Always) && itemAmmo != null && config.WpnPlusAmmoKb ? Math.Round(player.GetWeaponKnockback(item, item.knockBack), 2) + " + " + Math.Round(player.GetWeaponKnockback(itemAmmo, itemAmmo.knockBack), 2) : Math.Round(player.GetWeaponKnockback(item, item.knockBack) + (itemAmmo != null && config.WpnPlusAmmoKb ? player.GetWeaponKnockback(itemAmmo, itemAmmo.knockBack) : 0), 2)) + Language.GetTextValue("Mods.TrueTooltips.TTGlobalItem.Knockback");
+                if(config.BetterKnockback) knockback.Text = ((keyState.PressingShift() && config.AmmoDmgKbSeparate == Config.State.Shift || config.AmmoDmgKbSeparate == Config.State.Always) && itemAmmo != null && config.WpnPlusAmmoKb ? Math.Round(player.GetWeaponKnockback(item, item.knockBack), 2) + " + " + Math.Round(player.GetWeaponKnockback(itemAmmo, itemAmmo.knockBack), 2) : Math.Round(player.GetWeaponKnockback(item, item.knockBack) + (itemAmmo != null && config.WpnPlusAmmoKb ? player.GetWeaponKnockback(itemAmmo, itemAmmo.knockBack) : 0), 2)) + Translation("Knockback");
             }
         }
 
@@ -366,7 +367,7 @@ internal class TTGlobalItem : GlobalItem
             else if(config.BestiaryNotes.Color != Color.White) bestiaryNotes.OverrideColor = config.BestiaryNotes.Color;
         }
 
-        if(itemAmmo != null && config.ItemAmmo) lines.Add(new TooltipLine(Mod, "ItemAmmo", itemAmmo.HoverName + ((keyState.PressingShift() && config.ItemMod == Config.State.Shift || config.ItemMod == Config.State.Always) && itemAmmo.ModItem != null ? " - " + itemAmmo.ModItem.Mod.DisplayName : string.Empty)) { OverrideColor = RarityColor(itemAmmo) });
+        if(item.useAmmo > 0 && config.ItemAmmo) lines.Add(new TooltipLine(Mod, "ItemAmmo", itemAmmo != null ? itemAmmo.HoverName + ((keyState.PressingShift() && config.ItemMod == Config.State.Shift || config.ItemMod == Config.State.Always) && itemAmmo.ModItem != null ? " - " + itemAmmo.ModItem.Mod.DisplayName : string.Empty) : Translation("No") + item.useAmmo switch { 40 => Translation("Arrow"), 71 => Translation("Coin"), 97 => Translation("Bullet"), 283 => Translation("Dart"), 771 => Translation("Rocket"), 780 => Translation("Solution"), _ => Lang.GetItemNameValue(item.useAmmo) }) { OverrideColor = itemAmmo != null ? RarityColor(itemAmmo) : new Color(120, 120, 120) });
 
         if(item.shopSpecialCurrency == -1 && (item.type < 71 || item.type > 74) && config.Price)
         {
@@ -445,9 +446,9 @@ internal class TTGlobalItem : GlobalItem
             _x += 4;
             _y += 4;
 
-            bgRight = Math.Max(config.BGXOffset + config.BGPaddingRight + 13, 0);
+            bgRight = Math.Max(config.BGXOffset + config.BGPaddingRight + 14, 0);
             bgLeft = Math.Min(config.BGXOffset - 14, 0);
-            bgBottom = Math.Max(config.BGYOffset + config.BGPaddingBottom + 13, 0);
+            bgBottom = Math.Max(config.BGYOffset + config.BGPaddingBottom + 14, 0);
             bgTop = Math.Min(config.BGYOffset - 14, 0);
         }
 

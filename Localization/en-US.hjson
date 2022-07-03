@@ -72,6 +72,13 @@ Mods:
         {
             Speed: " uses per second"
             Knockback: " knockback"
+            No: "No "
+            Arrow: Arrow
+            Coin: Coin
+            Bullet: Bullet
+            Dart: Dart
+            Rocket: Rocket
+            Solution: Solution
         }
     }
 }

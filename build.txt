@@ -2,4 +2,4 @@ author = Graumen
 displayName = True Tooltips
 homepage = https://github.com/Graumen/TrueTooltips
 side = Client
-version = 1.4.1
+version = 1.4.1.1

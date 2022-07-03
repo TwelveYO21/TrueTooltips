@@ -17,7 +17,7 @@ True Tooltips is a highly customizable tooltip-enhancing mod. All features can b
 
 - Lets you turn off the pulsing of the text.
 
-- Adds a tooltip line showing the item's ammo, as well as the mod adding the ammo when "Item Mod" is on.
+- Adds a tooltip line showing the item's ammo or the ammo the item needs, as well as the mod adding the ammo when "Item Mod" is on.
 
 - Shows the mod adding the item when holding SHIFT, or always, alternatively.
 
