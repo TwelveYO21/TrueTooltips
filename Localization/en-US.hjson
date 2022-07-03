@@ -16,6 +16,7 @@ Mods:
             Spacing: Line Spacing
             Sprite: Sprite
             SpriteTooltip: Shows the item's sprite in the tooltip always, or only when holding SHIFT, alternatively
+            SpriteBG: Sprite Background
             TextPulse: Text Pulse
             #VanillaOrder: Vanilla Line Order
 

@@ -429,7 +429,7 @@ internal class TTGlobalItem : GlobalItem
             bgBottom = 0,
             bgTop = 0,
             offsetFromSprite = 0,
-            max = new[] { spriteRect.Width, spriteRect.Height, 64 }.Max();
+            max = new[] { spriteRect.Width + 28, spriteRect.Height + 28, 64 }.Max();
 
         static Vector2 StringSize(string text) => ChatManager.GetStringSize(FontAssets.MouseText.Value, text, Vector2.One);
 
@@ -477,7 +477,54 @@ internal class TTGlobalItem : GlobalItem
         if(y + height + bgBottom > screenHeight) y = _y = screenHeight - height - bgBottom;
         if(y + bgTop < 0) y = _y = -bgTop;
 
-        if(config.Background.A > 0) Utils.DrawInvBG(spriteBatch, new Rectangle(x + config.BGXOffset - 14, y + config.BGYOffset - 14, width + offsetFromSprite + config.TextXOffset + config.BGPaddingRight + 28, height + config.BGPaddingBottom + 28), config.Background);
+        if(config.SpriteBG.A > 0 && offsetFromSprite > 0)
+        {
+            if(config.Background.A > 0)
+            {
+                DepthStencilState mask = new()
+                {
+                    StencilEnable = true,
+                    DepthBufferEnable = false,
+                    ReferenceStencil = 1,
+                    StencilFunction = CompareFunction.Always,
+                    StencilPass = StencilOperation.Replace
+                };
+
+                AlphaTestEffect alphaTest = new(instance.GraphicsDevice)
+                {
+                    ReferenceAlpha = 0,
+                    AlphaFunction = CompareFunction.Greater,
+                    Projection = UIScaleMatrix * Matrix.CreateOrthographicOffCenter(0f, instance.GraphicsDevice.PresentationParameters.BackBufferWidth, instance.GraphicsDevice.PresentationParameters.BackBufferHeight, 0f, 0f, 1f),
+                    DiffuseColor = config.SpriteBG.ToVector3(),
+                    Alpha = config.SpriteBG.A / 255f
+                };
+
+                spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerStateForCursor, mask, RasterizerState.CullCounterClockwise, alphaTest, UIScaleMatrix);
+            }
+
+            Utils.DrawInvBG(spriteBatch, x, y, max, max, config.SpriteBG);
+        }
+
+        if(config.Background.A > 0)
+        {
+            if(config.SpriteBG.A > 0 && offsetFromSprite > 0)
+            {
+                DepthStencilState compare = new()
+                {
+                    StencilEnable = true,
+                    DepthBufferEnable = false,
+                    ReferenceStencil = 0,
+                    StencilFunction = CompareFunction.Equal,
+                    StencilPass = StencilOperation.Keep
+                };
+
+                spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerStateForCursor, compare, RasterizerState.CullCounterClockwise, null, UIScaleMatrix);
+            }
+
+            Utils.DrawInvBG(spriteBatch, x + config.BGXOffset - 14, y + config.BGYOffset - 14, width + offsetFromSprite + config.TextXOffset + config.BGPaddingRight + 28, height + config.BGPaddingBottom + 28, config.Background);
+        }
 
         if(offsetFromSprite > 0)
         {
@@ -489,11 +536,30 @@ internal class TTGlobalItem : GlobalItem
             _x += offsetFromSprite;
 
             Terraria.UI.ItemSlot.GetItemLight(ref color, ref scale, item);
+
+            if(config.SpriteBG.A > 0 && config.Background.A > 0)
+            {
+                DepthStencilState clear = new()
+                {
+                    StencilEnable = true,
+                    DepthBufferEnable = false,
+                    ReferenceStencil = 0,
+                    StencilFunction = CompareFunction.Always,
+                    StencilPass = StencilOperation.Replace
+                };
+
+                spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerStateForCursor, clear, RasterizerState.CullCounterClockwise, null, UIScaleMatrix);
+
+                spriteBatch.Draw(TextureAssets.InventoryBack13.Value, new Rectangle(x, y, max, max), new Rectangle(10, 10, 10, 10), Color.Transparent);
+
+                spriteBatch.End();
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerStateForCursor, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, UIScaleMatrix);
+            }
+
             Draw(item.GetAlpha(color));
             if(item.color != Color.Transparent) Draw(item.GetColor(Color.White));
         }
-
-        //spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerStateForCursor, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, UIScaleMatrix);
 
         height = 0;
 

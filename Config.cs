@@ -70,6 +70,10 @@ internal class Config : ModConfig
     [DefaultValue(State.Always)]
     public State Sprite;
 
+    [Label("$Mods.TrueTooltips.Config.SpriteBG")]
+    [DefaultValue(typeof(Color), "169,171,222,235")]
+    public Color SpriteBG;
+
     [Label("$Mods.TrueTooltips.Config.TextPulse")]
     public bool TextPulse;
 
