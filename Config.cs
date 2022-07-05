@@ -37,29 +37,21 @@ internal class Config : ModConfig
     [DefaultValue(typeof(Color), "21,23,74,235")]
     public Color Background;
 
-    [Label("$Mods.TrueTooltips.Config.BGXOffset")]
-    [Range(int.MinValue, int.MaxValue)]
-    public int BGXOffset;
-
-    [Label("$Mods.TrueTooltips.Config.BGYOffset")]
-    [Range(int.MinValue, int.MaxValue)]
-    public int BGYOffset;
+    [Label("$Mods.TrueTooltips.Config.BGPaddingLeft")]
+    [Range(-4, int.MaxValue)]
+    public int BGPaddingLeft;
 
     [Label("$Mods.TrueTooltips.Config.BGPaddingRight")]
-    [Range(int.MinValue, int.MaxValue)]
+    [Range(-4, int.MaxValue)]
     public int BGPaddingRight;
 
+    [Label("$Mods.TrueTooltips.Config.BGPaddingTop")]
+    [Range(-4, int.MaxValue)]
+    public int BGPaddingTop;
+
     [Label("$Mods.TrueTooltips.Config.BGPaddingBottom")]
-    [Range(int.MinValue, int.MaxValue)]
+    [Range(-4, int.MaxValue)]
     public int BGPaddingBottom;
-
-    [Label("$Mods.TrueTooltips.Config.TextXOffset")]
-    [Range(int.MinValue, int.MaxValue)]
-    public int TextXOffset;
-
-    [Label("$Mods.TrueTooltips.Config.TextYOffset")]
-    [Range(int.MinValue, int.MaxValue)]
-    public int TextYOffset;
 
     [Label("$Mods.TrueTooltips.Config.Spacing")]
     [Range(int.MinValue, int.MaxValue)]
@@ -76,9 +68,6 @@ internal class Config : ModConfig
 
     [Label("$Mods.TrueTooltips.Config.TextPulse")]
     public bool TextPulse;
-
-    // [Label("$Mods.TrueTooltips.Config.VanillaOrder")]
-    // public bool VanillaOrder;
 
     [Header("$Mods.TrueTooltips.Config.Header1")]
 
