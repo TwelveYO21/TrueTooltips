@@ -42,9 +42,9 @@ internal class TTGlobalItem : GlobalItem
     public override void ModifyTooltips(Item item, List<TooltipLine> lines)
     {
         Config config = GetInstance<Config>();
-        int value = 0;
         Item itemAmmo = null;
         Player player = LocalPlayer;
+        int value = 0;
 
         TooltipLine Find(string name) => lines.Find(l => l.Name == name);
 
@@ -518,23 +518,26 @@ internal class TTGlobalItem : GlobalItem
     public override bool PreDrawTooltip(Item item, ReadOnlyCollection<TooltipLine> lines, ref int _x, ref int _y)
     {
         Config config = GetInstance<Config>();
-        int bgPadBottom = 0;
-        int bgPadLeft = 0;
-        int bgPadRight = 0;
-        int bgPadTop = 0;
-        int offsetFromSprite = 0;
-        int tooltipHeight = 0;
-        int widestLineWidth = 0;
-        int x = mouseX + config.XOffset + 20;
-        int y = mouseY + config.YOffset + 20;
         Texture2D sprite = TextureAssets.Item[item.type].Value;
         Rectangle spriteSize = itemAnimations[item.type]?.GetFrame(sprite) ?? sprite.Frame();
+        bool showSprite = config.Sprite == Config.State.Always || keyState.PressingShift() && config.Sprite == Config.State.Shift;
+        int x = mouseX + config.XOffset + 20;
+        int y = mouseY + config.YOffset + 20;
+        int tooltipWidth = 0;
+        int tooltipHeight = config.TextYOffset - config.Spacing;
+        int bgLeft = 0;
+        int bgRight = 0;
+        int bgTop = 0;
+        int bgBottom = 0;
         int spriteMax = new[] { spriteSize.Width + 28, spriteSize.Height + 28, 64 }.Max();
+        int xOffsetFromSprite = showSprite ? (spriteMax -= (spriteMax - spriteSize.Width) % 2) + 14 : 0;
+        int textLeft = Math.Max(-config.TextXOffset - xOffsetFromSprite, 0);
+        int textTop = Math.Max(-config.TextYOffset, 0);
 
         static Vector2 StringSize(string text) => ChatManager.GetStringSize(FontAssets.MouseText.Value, text, Vector2.One);
 
-        _x += config.XOffset;
-        _y += config.YOffset;
+        _x += config.XOffset + config.TextXOffset;
+        _y += config.YOffset + config.TextYOffset;
 
         if(ThickMouse)
         {
@@ -549,14 +552,19 @@ internal class TTGlobalItem : GlobalItem
         {
             Vector2 stringSize = StringSize(line.Text);
 
-            if(stringSize.X > widestLineWidth)
-                widestLineWidth = (int)stringSize.X;
+            if(stringSize.X > tooltipWidth)
+                tooltipWidth = (int)stringSize.X;
 
             if(line.Name == "OneDropLogo" && line.Mod == "Terraria")
                 tooltipHeight += 24 + config.Spacing;
             else
                 tooltipHeight += (int)stringSize.Y + config.Spacing;
         }
+
+        tooltipWidth += Math.Max(config.TextXOffset, -tooltipWidth - 14);
+
+        if(showSprite)
+            tooltipHeight = Math.Max(tooltipHeight, spriteMax);
 
         if(config.Background.A > 0)
         {
@@ -565,36 +573,30 @@ internal class TTGlobalItem : GlobalItem
             _x += 4;
             _y += 4;
 
-            bgPadRight = config.BGPaddingRight + 14;
-            bgPadLeft = -config.BGPaddingLeft - 14;
-            bgPadBottom = config.BGPaddingBottom + 14;
-            bgPadTop = -config.BGPaddingTop - 14;
+            bgLeft = config.BGPaddingLeft + 14;
+            bgRight = config.BGPaddingRight + 14;
+            bgTop = config.BGPaddingTop + 14;
+            bgBottom = config.BGPaddingBottom + 14;
         }
 
-        if(config.Sprite == Config.State.Always || keyState.PressingShift() && config.Sprite == Config.State.Shift)
-            offsetFromSprite = (spriteMax -= (spriteMax - spriteSize.Width) % 2) + 14;
-
-        if(offsetFromSprite > 0)
-            tooltipHeight = Math.Max(tooltipHeight, spriteMax);
-
-        if(x + offsetFromSprite + widestLineWidth + bgPadRight > screenWidth)
-            x = _x = screenWidth - bgPadRight - widestLineWidth - offsetFromSprite;
-        if(x + bgPadLeft < 0)
-            x = _x = -bgPadLeft;
-        if(y + tooltipHeight + bgPadBottom > screenHeight)
-            y = _y = screenHeight - bgPadBottom - tooltipHeight;
-        if(y + bgPadTop < 0)
-            y = _y = -bgPadTop;
+        if(x - textLeft - bgLeft < 0)
+            x = _x = textLeft + bgLeft;
+        if(x + xOffsetFromSprite + tooltipWidth + bgRight > screenWidth)
+            x = _x = screenWidth - xOffsetFromSprite - tooltipWidth - bgRight;
+        if(y - textTop - bgTop < 0)
+            y = _y = textTop + bgTop;
+        if(y + tooltipHeight + bgBottom > screenHeight)
+            y = _y = screenHeight - tooltipHeight - bgBottom;
 
         if(config.Background.A > 0)
         {
+            int bgX = x - textLeft - config.BGPaddingLeft - 4;
+            int bgY = y - textTop - config.BGPaddingTop - 4;
+            int bgWidth = config.BGPaddingLeft + textLeft + xOffsetFromSprite + tooltipWidth + config.BGPaddingRight + 8;
+            int bgHeight = config.BGPaddingTop + textTop + tooltipHeight + config.BGPaddingBottom + 8;
 
-            if(config.SpriteBG.A > 0 && offsetFromSprite > 0)
+            if(config.SpriteBG.A > 0 && showSprite)
             {
-                int bgHeight = config.BGPaddingTop + tooltipHeight + config.BGPaddingBottom + 8;
-                int bgWidth = config.BGPaddingLeft + offsetFromSprite + widestLineWidth + config.BGPaddingRight + 8;
-                int bgX = x - config.BGPaddingLeft - 4;
-                int bgY = y - config.BGPaddingTop - 4;
                 Texture2D background = TextureAssets.InventoryBack13.Value;
 
                 spriteBatch.Draw(background, new Vector2(bgX - 10, bgY - 10), new Rectangle(0, 0, 10, 10), config.Background);
@@ -605,9 +607,9 @@ internal class TTGlobalItem : GlobalItem
                 spriteBatch.Draw(background, new Rectangle(bgX - 10, bgY, 10, bgHeight), new Rectangle(0, 10, 10, 10), config.Background);
                 spriteBatch.Draw(background, new Rectangle(bgX + bgWidth, bgY, 10, bgHeight), new Rectangle(background.Width - 10, 10, 10, 10), config.Background);
                 spriteBatch.Draw(background, new Rectangle(bgX, bgY + bgHeight, bgWidth, 10), new Rectangle(10, background.Height - 10, 10, 10), config.Background);
-                spriteBatch.Draw(background, new Rectangle(bgX, bgY, bgWidth, config.BGPaddingTop + 4), new Rectangle(10, 10, 10, 10), config.Background);
-                spriteBatch.Draw(background, new Rectangle(bgX, y, config.BGPaddingLeft + 4, spriteMax), new Rectangle(10, 10, 10, 10), config.Background);
-                spriteBatch.Draw(background, new Rectangle(x + spriteMax, y, widestLineWidth + config.BGPaddingRight + 18, spriteMax), new Rectangle(10, 10, 10, 10), config.Background);
+                spriteBatch.Draw(background, new Rectangle(bgX, bgY, bgWidth, config.BGPaddingTop + 4 + textTop), new Rectangle(10, 10, 10, 10), config.Background);
+                spriteBatch.Draw(background, new Rectangle(bgX, y, config.BGPaddingLeft + 4 + textLeft, spriteMax), new Rectangle(10, 10, 10, 10), config.Background);
+                spriteBatch.Draw(background, new Rectangle(x + spriteMax, y, tooltipWidth + config.BGPaddingRight + 18, spriteMax), new Rectangle(10, 10, 10, 10), config.Background);
                 spriteBatch.Draw(background, new Rectangle(bgX, y + spriteMax, bgWidth, tooltipHeight + config.BGPaddingBottom + 4 - spriteMax), new Rectangle(10, 10, 10, 10), config.Background);
                 spriteBatch.Draw(Corners[0], new Vector2(x, y), config.Background);
                 spriteBatch.Draw(Corners[1], new Vector2(x + spriteMax - 10, y), config.Background);
@@ -615,20 +617,20 @@ internal class TTGlobalItem : GlobalItem
                 spriteBatch.Draw(Corners[3], new Vector2(x + spriteMax - 10, y + spriteMax - 10), config.Background);
             }
             else
-                Utils.DrawInvBG(spriteBatch, x - config.BGPaddingLeft - 14, y - config.BGPaddingTop - 14, config.BGPaddingLeft + offsetFromSprite + widestLineWidth + config.BGPaddingRight + 28, config.BGPaddingTop + tooltipHeight + config.BGPaddingBottom + 28, config.Background);
+                Utils.DrawInvBG(spriteBatch, bgX - 10, bgY - 10, bgWidth + 20, bgHeight + 20, config.Background);
         }
 
-        if(config.SpriteBG.A > 0 && offsetFromSprite > 0)
+        if(config.SpriteBG.A > 0 && showSprite)
             Utils.DrawInvBG(spriteBatch, x, y, spriteMax, spriteMax, config.SpriteBG);
 
-        if(offsetFromSprite > 0)
+        if(showSprite)
         {
             float scale = 1f;
             Color color = Color.White;
 
-            void Draw(Color color) => spriteBatch.Draw(sprite, new Vector2(x + (spriteMax - spriteSize.Width - (spriteMax - spriteSize.Width) % 2) / 2, y + (spriteMax - spriteSize.Height - (spriteMax - spriteSize.Height) % 2) / 2), spriteSize, color, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            void Draw(Color color) => spriteBatch.Draw(sprite, new Vector2(x + (spriteMax - spriteSize.Width) / 2, y + (spriteMax - spriteSize.Height) / 2), spriteSize, color, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
 
-            _x += offsetFromSprite;
+            _x += xOffsetFromSprite;
 
             Terraria.UI.ItemSlot.GetItemLight(ref color, ref scale, item);
             Draw(item.GetAlpha(color));
@@ -636,18 +638,18 @@ internal class TTGlobalItem : GlobalItem
                 Draw(item.GetColor(Color.White));
         }
 
-        tooltipHeight = 0;
+        tooltipHeight = config.TextYOffset;
 
         foreach(TooltipLine line in lines)
         {
             if(line.Name == "OneDropLogo" && line.Mod == "Terraria")
             {
-                spriteBatch.Draw(TextureAssets.OneDropLogo.Value, new Vector2(x + offsetFromSprite, y + tooltipHeight), TextPulse(RarityColor(item, line)));
+                spriteBatch.Draw(TextureAssets.OneDropLogo.Value, new Vector2(x + xOffsetFromSprite + config.TextXOffset, y + tooltipHeight), TextPulse(RarityColor(item, line)));
                 tooltipHeight += 24 + config.Spacing;
             }
             else
             {
-                ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, line.Text, new Vector2(x + offsetFromSprite, y + tooltipHeight), TextPulse(RarityColor(item, line)), 0f, Vector2.Zero, Vector2.One, -1f, 2f);
+                ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, line.Text, new Vector2(x + xOffsetFromSprite + config.TextXOffset, y + tooltipHeight), TextPulse(RarityColor(item, line)), 0f, Vector2.Zero, Vector2.One, -1f, 2f);
                 tooltipHeight += (int)StringSize(line.Text).Y + config.Spacing;
             }
         }

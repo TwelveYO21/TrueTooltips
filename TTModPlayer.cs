@@ -6,9 +6,9 @@ internal class TTModPlayer : ModPlayer
     {
         List<Color[]> cornerData = new() { new Color[100], new Color[100], new Color[100], new Color[100] };
         Texture2D background = TextureAssets.InventoryBack13.Value;
+        var bgColor = new Color[1];
         int[] cornerX = { 0, background.Width - 10, 0, background.Width - 10 };
         int[] cornerY = { 0, 0, background.Height - 10, background.Height - 10 };
-        var bgColor = new Color[1];
 
         background.GetData(0, new Rectangle(10, 10, 1, 1), bgColor, 0, 1);
 

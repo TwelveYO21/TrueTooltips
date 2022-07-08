@@ -53,9 +53,13 @@ internal class Config : ModConfig
     [Range(-4, int.MaxValue)]
     public int BGPaddingBottom;
 
-    [Label("$Mods.TrueTooltips.Config.Spacing")]
+    [Label("$Mods.TrueTooltips.Config.TextXOffset")]
     [Range(int.MinValue, int.MaxValue)]
-    public int Spacing;
+    public int TextXOffset;
+
+    [Label("$Mods.TrueTooltips.Config.TextYOffset")]
+    [Range(int.MinValue, int.MaxValue)]
+    public int TextYOffset;
 
     [Label("$Mods.TrueTooltips.Config.Sprite")]
     [Tooltip("$Mods.TrueTooltips.Config.SpriteTooltip")]
@@ -65,6 +69,10 @@ internal class Config : ModConfig
     [Label("$Mods.TrueTooltips.Config.SpriteBG")]
     [DefaultValue(typeof(Color), "169,171,222,235")]
     public Color SpriteBG;
+
+    [Label("$Mods.TrueTooltips.Config.Spacing")]
+    [Range(int.MinValue, int.MaxValue)]
+    public int Spacing;
 
     [Label("$Mods.TrueTooltips.Config.TextPulse")]
     public bool TextPulse;

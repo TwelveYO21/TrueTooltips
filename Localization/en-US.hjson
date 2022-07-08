@@ -11,10 +11,12 @@ Mods:
             BGPaddingRight: Background Right Padding
             BGPaddingTop: Background Top Padding
             BGPaddingBottom: Background Bottom Padding
-            Spacing: Line Spacing
+            TextXOffset: Text X Offset
+            TextYOffset: Text Y Offset
             Sprite: Sprite
             SpriteTooltip: Shows the item's sprite in the tooltip always, or only when holding SHIFT, alternatively
             SpriteBG: Sprite Background
+            Spacing: Line Spacing
             TextPulse: Text Pulse
 
             Header1: Custom Tooltip Lines
