@@ -1,5 +1,5 @@
 
-True Tooltips is a highly customizable tooltip-enhancing mod. All features can be turned off.
+The 1.4 port of True Tooltips. True Tooltips is a highly customizable tooltip-enhancing mod. All features can be turned off.
 
 # Features
 

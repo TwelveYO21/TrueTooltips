@@ -1,13 +1,10 @@
-﻿global using Microsoft.Xna.Framework;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using Terraria.ModLoader.Config;
 
 namespace TrueTooltips;
 
 internal class Config : ModConfig
 {
-    public override ConfigScope Mode => ConfigScope.ClientSide;
-
     public class Line
     {
         [Label("")]
@@ -16,13 +13,6 @@ internal class Config : ModConfig
         [Label("")]
         [ColorNoAlpha]
         public Color Color = Color.White;
-    }
-
-    public enum State
-    {
-        Always,
-        Shift,
-        Off
     }
 
     [Label("$Mods.TrueTooltips.Config.XOffset")]
@@ -63,8 +53,8 @@ internal class Config : ModConfig
 
     [Label("$Mods.TrueTooltips.Config.Sprite")]
     [Tooltip("$Mods.TrueTooltips.Config.SpriteTooltip")]
-    [DefaultValue(State.Always)]
-    public State Sprite;
+    [DefaultValue(TrueTooltips.Mode.Always)]
+    public Mode Sprite;
 
     [Label("$Mods.TrueTooltips.Config.SpriteBG")]
     [DefaultValue(typeof(Color), "169,171,222,235")]
@@ -86,8 +76,8 @@ internal class Config : ModConfig
 
     [Label("$Mods.TrueTooltips.Config.ItemMod")]
     [Tooltip("$Mods.TrueTooltips.Config.ItemModTooltip")]
-    [DefaultValue(State.Shift)]
-    public State ItemMod;
+    [DefaultValue(TrueTooltips.Mode.Shift)]
+    public Mode ItemMod;
 
     [Label("$Mods.TrueTooltips.Config.BetterPrice")]
     [Tooltip("$Mods.TrueTooltips.Config.BetterPriceTooltip")]
@@ -116,8 +106,8 @@ internal class Config : ModConfig
 
     [Label("$Mods.TrueTooltips.Config.AmmoDmgKbSeparate")]
     [Tooltip("$Mods.TrueTooltips.Config.AmmoDmgKbSeparateTooltip")]
-    [DefaultValue(State.Shift)]
-    public State AmmoDmgKbSeparate;
+    [DefaultValue(TrueTooltips.Mode.Shift)]
+    public Mode AmmoDmgKbSeparate;
 
     [Header("$Mods.TrueTooltips.Config.Header2")]
 
@@ -284,4 +274,6 @@ internal class Config : ModConfig
     [Label("$Mods.TrueTooltips.Config.Price")]
     [DefaultValue(true)]
     public bool Price;
+
+    public override ConfigScope Mode => ConfigScope.ClientSide;
 }

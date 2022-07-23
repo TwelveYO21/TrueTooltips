@@ -1,11 +1,4 @@
-﻿global using Microsoft.Xna.Framework.Graphics;
-global using System.Collections.Generic;
-global using Terraria;
-global using Terraria.GameContent;
-global using Terraria.ModLoader;
-global using static Terraria.Main;
-global using static Terraria.ModLoader.ModContent;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -17,8 +10,28 @@ namespace TrueTooltips;
 
 internal class TTGlobalItem : GlobalItem
 {
-    internal static Texture2D[] Corners = new Texture2D[4];
     private static Color priceColor;
+    private static readonly Texture2D[] corners = new Texture2D[4];
+
+    internal static void LoadCorners()
+    {
+        List<Color[]> cornerData = new() { new Color[100], new Color[100], new Color[100], new Color[100] };
+        Texture2D background = TextureAssets.InventoryBack13.Value;
+        var bgColor = new Color[1];
+        int[] cornerX = { 0, background.Width - 10, 0, background.Width - 10 };
+        int[] cornerY = { 0, 0, background.Height - 10, background.Height - 10 };
+
+        background.GetData(0, new Rectangle(10, 10, 1, 1), bgColor, 0, 1);
+        for(int i = 0; i < corners.Length; i++)
+            corners[i] = new Texture2D(spriteBatch.GraphicsDevice, 10, 10);
+        for(int i = 0; i < cornerData.Count; i++)
+        {
+            background.GetData(0, new Rectangle(cornerX[i], cornerY[i], 10, 10), cornerData[i], 0, 100);
+            for(int j = 0; j < cornerData[i].Length; j++)
+                cornerData[i][j] = cornerData[i][j].A > 0 ? Color.Transparent : bgColor[0];
+            corners[i]?.SetData(cornerData[i]);
+        }
+    }
 
     private static Color RarityColor(Item item, TooltipLine line = null) => line switch
     {
@@ -93,14 +106,12 @@ internal class TTGlobalItem : GlobalItem
         TooltipLine specialPrice = Find("SpecialPrice");
         TooltipLine price = Find("Price");
 
-        static string Translation(string key) => Language.GetTextValue("Mods.TrueTooltips.TTGlobalItem." + key);
+        static string GetTextValue(string key) => Language.GetTextValue("Mods.TrueTooltips.TTGlobalItem." + key);
 
         if(item.useAmmo > 0 && (config.ItemAmmo || config.WpnPlusAmmoDmg || config.WpnPlusAmmoKb && config.BetterKnockback))
             itemAmmo = player.ChooseAmmo(item);
-
-        if((keyState.PressingShift() && config.ItemMod == Config.State.Shift || config.ItemMod == Config.State.Always) && item.ModItem != null && itemName != null)
+        if((keyState.PressingShift() && config.ItemMod == Mode.Shift || config.ItemMod == Mode.Always) && item.ModItem != null && itemName != null)
             itemName.Text += " - " + item.ModItem.Mod.DisplayName;
-
         if(favorite != null)
         {
             if(!config.Favorite.On)
@@ -108,7 +119,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.Favorite.Color != Color.White)
                 favorite.OverrideColor = config.Favorite.Color;
         }
-
         if(favoriteDesc != null)
         {
             if(!config.FavoriteDesc.On)
@@ -116,7 +126,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.FavoriteDesc.Color != Color.White)
                 favoriteDesc.OverrideColor = config.FavoriteDesc.Color;
         }
-
         if(noTransfer != null)
         {
             if(!config.NoTransfer.On)
@@ -124,7 +133,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.NoTransfer.Color != Color.White)
                 noTransfer.OverrideColor = config.NoTransfer.Color;
         }
-
         if(social != null)
         {
             if(!config.Social.On)
@@ -132,7 +140,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.Social.Color != Color.White)
                 social.OverrideColor = config.Social.Color;
         }
-
         if(socialDesc != null)
         {
             if(!config.SocialDesc.On)
@@ -140,7 +147,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.SocialDesc.Color != Color.White)
                 socialDesc.OverrideColor = config.SocialDesc.Color;
         }
-
         if(damage != null)
         {
             if(!config.Damage.On)
@@ -150,10 +156,9 @@ internal class TTGlobalItem : GlobalItem
                 if(config.Damage.Color != Color.White)
                     damage.OverrideColor = config.Damage.Color;
                 if(itemAmmo != null && config.WpnPlusAmmoDmg)
-                    damage.Text = Regex.Replace(damage.Text, @"^\d+", keyState.PressingShift() && config.AmmoDmgKbSeparate == Config.State.Shift || config.AmmoDmgKbSeparate == Config.State.Always ? player.GetWeaponDamage(item, true) + " + " + player.GetWeaponDamage(itemAmmo, true) : (player.GetWeaponDamage(item, true) + player.GetWeaponDamage(itemAmmo, true)).ToString());
+                    damage.Text = Regex.Replace(damage.Text, @"^\d+", keyState.PressingShift() && config.AmmoDmgKbSeparate == Mode.Shift || config.AmmoDmgKbSeparate == Mode.Always ? player.GetWeaponDamage(item, true) + " + " + player.GetWeaponDamage(itemAmmo, true) : (player.GetWeaponDamage(item, true) + player.GetWeaponDamage(itemAmmo, true)).ToString());
             }
         }
-
         if(critChance != null)
         {
             if(!config.CritChance.On)
@@ -161,7 +166,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.CritChance.Color != Color.White)
                 critChance.OverrideColor = config.CritChance.Color;
         }
-
         if(speed != null)
         {
             if(!config.Speed.On)
@@ -171,10 +175,9 @@ internal class TTGlobalItem : GlobalItem
                 if(config.Speed.Color != Color.White)
                     speed.OverrideColor = config.Speed.Color;
                 if(config.BetterSpeed)
-                    speed.Text = Math.Round(60d / item.useAnimation, 2) + Translation("Speed");
+                    speed.Text = Math.Round(60d / item.useAnimation, 2) + GetTextValue("Speed");
             }
         }
-
         if(noSpeedScaling != null)
         {
             if(!config.NoSpeedScaling.On)
@@ -182,7 +185,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.NoSpeedScaling.Color != Color.White)
                 noSpeedScaling.OverrideColor = config.NoSpeedScaling.Color;
         }
-
         if(specialSpeedScaling != null)
         {
             if(!config.SpecialSpeedScaling.On)
@@ -190,7 +192,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.SpecialSpeedScaling.Color != Color.White)
                 specialSpeedScaling.OverrideColor = config.SpecialSpeedScaling.Color;
         }
-
         if(knockback != null)
         {
             if(!config.Knockback.On)
@@ -200,10 +201,9 @@ internal class TTGlobalItem : GlobalItem
                 if(config.Knockback.Color != Color.White)
                     knockback.OverrideColor = config.Knockback.Color;
                 if(config.BetterKnockback)
-                    knockback.Text = ((keyState.PressingShift() && config.AmmoDmgKbSeparate == Config.State.Shift || config.AmmoDmgKbSeparate == Config.State.Always) && itemAmmo != null && config.WpnPlusAmmoKb ? Math.Round(player.GetWeaponKnockback(item, item.knockBack), 2) + " + " + Math.Round(player.GetWeaponKnockback(itemAmmo, itemAmmo.knockBack), 2) : Math.Round(player.GetWeaponKnockback(item, item.knockBack) + (itemAmmo != null && config.WpnPlusAmmoKb ? player.GetWeaponKnockback(itemAmmo, itemAmmo.knockBack) : 0), 2)) + Translation("Knockback");
+                    knockback.Text = ((keyState.PressingShift() && config.AmmoDmgKbSeparate == Mode.Shift || config.AmmoDmgKbSeparate == Mode.Always) && itemAmmo != null && config.WpnPlusAmmoKb ? Math.Round(player.GetWeaponKnockback(item, item.knockBack), 2) + " + " + Math.Round(player.GetWeaponKnockback(itemAmmo, itemAmmo.knockBack), 2) : Math.Round(player.GetWeaponKnockback(item, item.knockBack) + (itemAmmo != null && config.WpnPlusAmmoKb ? player.GetWeaponKnockback(itemAmmo, itemAmmo.knockBack) : 0f), 2)) + GetTextValue("Knockback");
             }
         }
-
         if(fishingPower != null)
         {
             if(!config.FishingPower.On)
@@ -211,7 +211,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.FishingPower.Color != Color.White)
                 fishingPower.OverrideColor = config.FishingPower.Color;
         }
-
         if(needsBait != null)
         {
             if(!config.NeedsBait.On)
@@ -219,7 +218,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.NeedsBait.Color != Color.White)
                 needsBait.OverrideColor = config.NeedsBait.Color;
         }
-
         if(baitPower != null)
         {
             if(!config.BaitPower.On)
@@ -227,7 +225,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.BaitPower.Color != Color.White)
                 baitPower.OverrideColor = config.BaitPower.Color;
         }
-
         if(equipable != null)
         {
             if(!config.Equipable.On)
@@ -235,7 +232,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.Equipable.Color != Color.White)
                 equipable.OverrideColor = config.Equipable.Color;
         }
-
         if(wandConsumes != null)
         {
             if(!config.WandConsumes.On)
@@ -243,7 +239,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.WandConsumes.Color != Color.White)
                 wandConsumes.OverrideColor = config.WandConsumes.Color;
         }
-
         if(quest != null)
         {
             if(!config.Quest.On)
@@ -251,7 +246,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.Quest.Color != Color.White)
                 quest.OverrideColor = config.Quest.Color;
         }
-
         if(vanity != null)
         {
             if(!config.Vanity.On)
@@ -259,7 +253,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.Vanity.Color != Color.White)
                 vanity.OverrideColor = config.Vanity.Color;
         }
-
         if(vanityLegal != null)
         {
             if(!config.VanityLegal.On)
@@ -267,7 +260,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.VanityLegal.Color != Color.White)
                 vanityLegal.OverrideColor = config.VanityLegal.Color;
         }
-
         if(defense != null)
         {
             if(!config.Defense.On)
@@ -275,7 +267,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.Defense.Color != Color.White)
                 defense.OverrideColor = config.Defense.Color;
         }
-
         if(pickPower != null)
         {
             if(!config.PickPower.On)
@@ -283,7 +274,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.PickPower.Color != Color.White)
                 pickPower.OverrideColor = config.PickPower.Color;
         }
-
         if(axePower != null)
         {
             if(!config.AxePower.On)
@@ -291,7 +281,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.AxePower.Color != Color.White)
                 axePower.OverrideColor = config.AxePower.Color;
         }
-
         if(hammerPower != null)
         {
             if(!config.HammerPower.On)
@@ -299,7 +288,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.HammerPower.Color != Color.White)
                 hammerPower.OverrideColor = config.HammerPower.Color;
         }
-
         if(tileBoost != null)
         {
             if(!config.TileBoost.On)
@@ -307,7 +295,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.TileBoost.Color != Color.White)
                 tileBoost.OverrideColor = config.TileBoost.Color;
         }
-
         if(healLife != null)
         {
             if(!config.HealLife.On)
@@ -315,7 +302,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.HealLife.Color != Color.White)
                 healLife.OverrideColor = config.HealLife.Color;
         }
-
         if(healMana != null)
         {
             if(!config.HealMana.On)
@@ -323,7 +309,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.HealMana.Color != Color.White)
                 healMana.OverrideColor = config.HealMana.Color;
         }
-
         if(useMana != null)
         {
             if(!config.UseMana.On)
@@ -331,7 +316,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.UseMana.Color != Color.White)
                 useMana.OverrideColor = config.UseMana.Color;
         }
-
         if(placeable != null)
         {
             if(!config.Placeable.On)
@@ -339,7 +323,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.Placeable.Color != Color.White)
                 placeable.OverrideColor = config.Placeable.Color;
         }
-
         if(ammo != null)
         {
             if(!config.Ammo.On)
@@ -347,7 +330,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.Ammo.Color != Color.White)
                 ammo.OverrideColor = config.Ammo.Color;
         }
-
         if(consumable != null)
         {
             if(!config.Consumable.On)
@@ -355,7 +337,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.Consumable.Color != Color.White)
                 consumable.OverrideColor = config.Consumable.Color;
         }
-
         if(material != null)
         {
             if(!config.Material.On)
@@ -363,7 +344,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.Material.Color != Color.White)
                 material.OverrideColor = config.Material.Color;
         }
-
         if(etherianManaWarning != null)
         {
             if(!config.EtherianManaWarning.On)
@@ -371,7 +351,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.EtherianManaWarning.Color != Color.White)
                 etherianManaWarning.OverrideColor = config.EtherianManaWarning.Color;
         }
-
         if(wellFedExpert != null)
         {
             if(!config.WellFedExpert.On)
@@ -379,7 +358,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.WellFedExpert.Color != Color.White)
                 wellFedExpert.OverrideColor = config.WellFedExpert.Color;
         }
-
         if(buffTime != null)
         {
             if(!config.BuffTime.On)
@@ -387,7 +365,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.BuffTime.Color != Color.White)
                 buffTime.OverrideColor = config.BuffTime.Color;
         }
-
         if(oneDropLogo != null)
         {
             if(!config.OneDropLogo.On)
@@ -395,14 +372,12 @@ internal class TTGlobalItem : GlobalItem
             else if(config.OneDropLogo.Color != Color.White)
                 oneDropLogo.OverrideColor = config.OneDropLogo.Color;
         }
-
         if(item.prefix > 0)
         {
             if(!config.GoodModifier.On)
                 lines.RemoveAll(l => l.IsModifier && !l.IsModifierBad);
             if(!config.BadModifier.On)
                 lines.RemoveAll(l => l.IsModifierBad);
-
             foreach(TooltipLine line in lines)
             {
                 if(line.IsModifier && !line.IsModifierBad && config.GoodModifier.Color != new Color(120, 190, 120))
@@ -411,7 +386,6 @@ internal class TTGlobalItem : GlobalItem
                     line.OverrideColor = config.BadModifier.Color;
             }
         }
-
         if(setBonus != null)
         {
             if(!config.SetBonus.On)
@@ -419,7 +393,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.SetBonus.Color != Color.White)
                 setBonus.OverrideColor = config.SetBonus.Color;
         }
-
         if(expert != null)
         {
             if(!config.Expert.On)
@@ -427,7 +400,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.Expert.Color != Color.White)
                 expert.OverrideColor = config.Expert.Color;
         }
-
         if(master != null)
         {
             if(!config.Master.On)
@@ -435,7 +407,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.Master.Color != Color.White)
                 master.OverrideColor = config.Master.Color;
         }
-
         if(journeyResearch != null)
         {
             if(!config.JourneyResearch.On)
@@ -443,7 +414,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.JourneyResearch.Color != new Color(255, 120, 187))
                 journeyResearch.OverrideColor = config.JourneyResearch.Color;
         }
-
         if(modifiedByMods != null)
         {
             if(!config.ModifiedByMods.On)
@@ -451,7 +421,6 @@ internal class TTGlobalItem : GlobalItem
             else if(config.ModifiedByMods.Color != Color.White)
                 modifiedByMods.OverrideColor = config.ModifiedByMods.Color;
         }
-
         if(bestiaryNotes != null)
         {
             if(!config.BestiaryNotes.On)
@@ -459,15 +428,13 @@ internal class TTGlobalItem : GlobalItem
             else if(config.BestiaryNotes.Color != Color.White)
                 bestiaryNotes.OverrideColor = config.BestiaryNotes.Color;
         }
-
         if(item.useAmmo > 0 && config.ItemAmmo)
-            lines.Add(new TooltipLine(Mod, "ItemAmmo", itemAmmo != null ? itemAmmo.HoverName + ((keyState.PressingShift() && config.ItemMod == Config.State.Shift || config.ItemMod == Config.State.Always) && itemAmmo.ModItem != null ? " - " + itemAmmo.ModItem.Mod.DisplayName : string.Empty) : Translation("No") + item.useAmmo switch { 40 => Translation("Arrow"), 71 => Translation("Coin"), 97 => Translation("Bullet"), 283 => Translation("Dart"), 771 => Translation("Rocket"), 780 => Translation("Solution"), _ => Lang.GetItemNameValue(item.useAmmo) }) { OverrideColor = itemAmmo != null ? RarityColor(itemAmmo) : new Color(120, 120, 120) });
-
-        if(item.shopSpecialCurrency == -1 && (item.type < 71 || item.type > 74) && config.Price)
+            lines.Add(new TooltipLine(Mod, "ItemAmmo", itemAmmo != null ? itemAmmo.HoverName + ((keyState.PressingShift() && config.ItemMod == Mode.Shift || config.ItemMod == Mode.Always) && itemAmmo.ModItem != null ? " - " + itemAmmo.ModItem.Mod.DisplayName : string.Empty) : GetTextValue("No") + item.useAmmo switch { 40 => GetTextValue("Arrow"), 71 => GetTextValue("Coin"), 97 => GetTextValue("Bullet"), 283 => GetTextValue("Dart"), 771 => GetTextValue("Rocket"), 780 => GetTextValue("Solution"), _ => Lang.GetItemNameValue(item.useAmmo) }) { OverrideColor = itemAmmo != null ? RarityColor(itemAmmo) : new Color(120, 120, 120) });
+        if(item.shopSpecialCurrency == -1 && item.type is < 71 or > 74 && config.Price)
         {
             player.GetItemExpectedPrice(item, out int calcForSelling, out int calcForBuying);
-
-            if((value = item.isAShopItem || item.buyOnce ? calcForBuying : calcForSelling) > 0)
+            value = item.isAShopItem || item.buyOnce ? calcForBuying : calcForSelling;
+            if(value > 0)
             {
                 int value2 = value * item.stack;
 
@@ -475,27 +442,25 @@ internal class TTGlobalItem : GlobalItem
                 {
                     int amount = shopSellbackHelper.GetAmount(item);
 
-                    if((value2 = value / 5) < 1)
+                    value2 = value / 5;
+                    if(value2 < 1)
                         value2 = 1;
 
                     int temp = value2;
 
                     value2 *= item.stack;
-
                     if(amount > 0)
                         value2 += (calcForBuying - temp) * Math.Min(amount, item.stack);
                 }
-
                 if(config.BetterPrice)
                 {
-                    int platinum = value2 / 1_000_000,
-                        gold = value2 / 10000 % 100,
-                        silver = value2 / 100 % 100,
-                        copper = value2 % 100;
+                    int platinum = value2 / 1_000_000;
+                    int gold = value2 / 10000 % 100;
+                    int silver = value2 / 100 % 100;
+                    int copper = value2 % 100;
 
                     lines.Add(new TooltipLine(Mod, "BetterPrice", ((platinum > 0 ? $"[c/{TextPulse(CoinPlatinum).Hex3()}:{platinum} {Lang.inter[15].Value} ]" : string.Empty) + (gold > 0 ? $"[c/{TextPulse(CoinGold).Hex3()}:{gold} {Lang.inter[16].Value} ]" : string.Empty) + (silver > 0 ? $"[c/{TextPulse(CoinSilver).Hex3()}:{silver} {Lang.inter[17].Value} ]" : string.Empty) + (copper > 0 ? $"[c/{TextPulse(CoinCopper).Hex3()}:{copper} {Lang.inter[18].Value}]" : string.Empty)).TrimEnd()));
                 }
-
                 priceColor = value2 switch
                 {
                     >= 1_000_000 => CoinPlatinum,
@@ -503,24 +468,22 @@ internal class TTGlobalItem : GlobalItem
                     >= 100 => CoinSilver,
                     _ => CoinCopper
                 };
-
             }
             else if(item.type != 3817)
                 priceColor = new Color(120, 120, 120);
         }
-
         if(specialPrice != null && !config.SpecialPrice)
             lines.Remove(specialPrice);
         if(price != null && (value > 0 && config.BetterPrice || !config.Price))
             lines.Remove(price);
     }
 
-    public override bool PreDrawTooltip(Item item, ReadOnlyCollection<TooltipLine> lines, ref int _x, ref int _y)
+    public override bool PreDrawTooltip(Item item, ReadOnlyCollection<TooltipLine> lines, ref int effectX, ref int effectY)
     {
         Config config = GetInstance<Config>();
         Texture2D sprite = TextureAssets.Item[item.type].Value;
-        Rectangle spriteSize = itemAnimations[item.type]?.GetFrame(sprite) ?? sprite.Frame();
-        bool showSprite = config.Sprite == Config.State.Always || keyState.PressingShift() && config.Sprite == Config.State.Shift;
+        Rectangle spriteFrame = itemAnimations[item.type]?.GetFrame(sprite) ?? sprite.Frame();
+        bool showSprite = config.Sprite == Mode.Always || keyState.PressingShift() && config.Sprite == Mode.Shift;
         int x = mouseX + config.XOffset + 20;
         int y = mouseY + config.YOffset + 20;
         int tooltipWidth = 0;
@@ -529,65 +492,55 @@ internal class TTGlobalItem : GlobalItem
         int bgRight = 0;
         int bgTop = 0;
         int bgBottom = 0;
-        int spriteMax = new[] { spriteSize.Width + 28, spriteSize.Height + 28, 64 }.Max();
-        int xOffsetFromSprite = showSprite ? (spriteMax -= (spriteMax - spriteSize.Width) % 2) + 14 : 0;
+        int spriteMax = new[] { spriteFrame.Width + 28, spriteFrame.Height + 28, 64 }.Max();
+        int xOffsetFromSprite = showSprite ? spriteMax + 14 : 0;
         int textLeft = Math.Max(-config.TextXOffset - xOffsetFromSprite, 0);
         int textTop = Math.Max(-config.TextYOffset, 0);
 
-        static Vector2 StringSize(string text) => ChatManager.GetStringSize(FontAssets.MouseText.Value, text, Vector2.One);
+        static Vector2 GetStringSize(string text) => ChatManager.GetStringSize(FontAssets.MouseText.Value, text, Vector2.One);
 
-        _x += config.XOffset + config.TextXOffset;
-        _y += config.YOffset + config.TextYOffset;
-
+        effectX += config.XOffset + config.TextXOffset;
+        effectY += config.YOffset + config.TextYOffset;
         if(ThickMouse)
         {
             x += 6;
             y += 6;
         }
-
         if(!mouseItem.IsAir)
             x += 34;
-
         foreach(TooltipLine line in lines)
         {
-            Vector2 stringSize = StringSize(line.Text);
+            Vector2 stringSize = GetStringSize(line.Text);
 
             if(stringSize.X > tooltipWidth)
                 tooltipWidth = (int)stringSize.X;
-
             if(line.Name == "OneDropLogo" && line.Mod == "Terraria")
                 tooltipHeight += 24 + config.Spacing;
             else
                 tooltipHeight += (int)stringSize.Y + config.Spacing;
         }
-
         tooltipWidth += Math.Max(config.TextXOffset, -tooltipWidth - 14);
-
         if(showSprite)
             tooltipHeight = Math.Max(tooltipHeight, spriteMax);
-
         if(config.Background.A > 0)
         {
             x += 4;
             y += 4;
-            _x += 4;
-            _y += 4;
-
+            effectX += 4;
+            effectY += 4;
             bgLeft = config.BGPaddingLeft + 14;
             bgRight = config.BGPaddingRight + 14;
             bgTop = config.BGPaddingTop + 14;
             bgBottom = config.BGPaddingBottom + 14;
         }
-
-        if(x - textLeft - bgLeft < 0)
-            x = _x = textLeft + bgLeft;
-        if(x + xOffsetFromSprite + tooltipWidth + bgRight > screenWidth)
-            x = _x = screenWidth - xOffsetFromSprite - tooltipWidth - bgRight;
-        if(y - textTop - bgTop < 0)
-            y = _y = textTop + bgTop;
-        if(y + tooltipHeight + bgBottom > screenHeight)
-            y = _y = screenHeight - tooltipHeight - bgBottom;
-
+        if(x < textLeft + bgLeft)
+            x = effectX = textLeft + bgLeft;
+        if(x > screenWidth - bgRight - tooltipWidth - xOffsetFromSprite)
+            x = effectX = screenWidth - bgRight - tooltipWidth - xOffsetFromSprite;
+        if(y < textTop + bgTop)
+            y = effectY = textTop + bgTop;
+        if(y > screenHeight - bgBottom - tooltipHeight)
+            y = effectY = screenHeight - bgBottom - tooltipHeight;
         if(config.Background.A > 0)
         {
             int bgX = x - textLeft - config.BGPaddingLeft - 4;
@@ -607,53 +560,43 @@ internal class TTGlobalItem : GlobalItem
                 spriteBatch.Draw(background, new Rectangle(bgX - 10, bgY, 10, bgHeight), new Rectangle(0, 10, 10, 10), config.Background);
                 spriteBatch.Draw(background, new Rectangle(bgX + bgWidth, bgY, 10, bgHeight), new Rectangle(background.Width - 10, 10, 10, 10), config.Background);
                 spriteBatch.Draw(background, new Rectangle(bgX, bgY + bgHeight, bgWidth, 10), new Rectangle(10, background.Height - 10, 10, 10), config.Background);
-                spriteBatch.Draw(background, new Rectangle(bgX, bgY, bgWidth, config.BGPaddingTop + 4 + textTop), new Rectangle(10, 10, 10, 10), config.Background);
-                spriteBatch.Draw(background, new Rectangle(bgX, y, config.BGPaddingLeft + 4 + textLeft, spriteMax), new Rectangle(10, 10, 10, 10), config.Background);
+                spriteBatch.Draw(background, new Rectangle(bgX, bgY, bgWidth, config.BGPaddingTop + textTop + 4), new Rectangle(10, 10, 10, 10), config.Background);
+                spriteBatch.Draw(background, new Rectangle(bgX, y, config.BGPaddingLeft + textLeft + 4, spriteMax), new Rectangle(10, 10, 10, 10), config.Background);
                 spriteBatch.Draw(background, new Rectangle(x + spriteMax, y, tooltipWidth + config.BGPaddingRight + 18, spriteMax), new Rectangle(10, 10, 10, 10), config.Background);
-                spriteBatch.Draw(background, new Rectangle(bgX, y + spriteMax, bgWidth, tooltipHeight + config.BGPaddingBottom + 4 - spriteMax), new Rectangle(10, 10, 10, 10), config.Background);
-                spriteBatch.Draw(Corners[0], new Vector2(x, y), config.Background);
-                spriteBatch.Draw(Corners[1], new Vector2(x + spriteMax - 10, y), config.Background);
-                spriteBatch.Draw(Corners[2], new Vector2(x, y + spriteMax - 10), config.Background);
-                spriteBatch.Draw(Corners[3], new Vector2(x + spriteMax - 10, y + spriteMax - 10), config.Background);
+                spriteBatch.Draw(background, new Rectangle(bgX, y + spriteMax, bgWidth, tooltipHeight + config.BGPaddingBottom - spriteMax + 4), new Rectangle(10, 10, 10, 10), config.Background);
+                if(corners[0] != null)
+                    spriteBatch.Draw(corners[0], new Vector2(x, y), config.Background);
+                if(corners[1] != null)
+                    spriteBatch.Draw(corners[1], new Vector2(x + spriteMax - 10, y), config.Background);
+                if(corners[2] != null)
+                    spriteBatch.Draw(corners[2], new Vector2(x, y + spriteMax - 10), config.Background);
+                if(corners[3] != null)
+                    spriteBatch.Draw(corners[3], new Vector2(x + spriteMax - 10, y + spriteMax - 10), config.Background);
             }
             else
                 Utils.DrawInvBG(spriteBatch, bgX - 10, bgY - 10, bgWidth + 20, bgHeight + 20, config.Background);
         }
-
         if(config.SpriteBG.A > 0 && showSprite)
             Utils.DrawInvBG(spriteBatch, x, y, spriteMax, spriteMax, config.SpriteBG);
-
         if(showSprite)
         {
-            float scale = 1f;
-            Color color = Color.White;
-
-            void Draw(Color color) => spriteBatch.Draw(sprite, new Vector2(x + (spriteMax - spriteSize.Width) / 2, y + (spriteMax - spriteSize.Height) / 2), spriteSize, color, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-
-            _x += xOffsetFromSprite;
-
-            Terraria.UI.ItemSlot.GetItemLight(ref color, ref scale, item);
-            Draw(item.GetAlpha(color));
-            if(item.color != Color.Transparent)
-                Draw(item.GetColor(Color.White));
+            spriteBatch.Draw(sprite, new Vector2(x, y) + new Vector2(spriteMax, spriteMax) / 2f, spriteFrame, Color.White, 0f, spriteFrame.Size() / 2f, 1f, SpriteEffects.None, 0f);
+            effectX += xOffsetFromSprite;
         }
-
         tooltipHeight = config.TextYOffset;
-
         foreach(TooltipLine line in lines)
         {
             if(line.Name == "OneDropLogo" && line.Mod == "Terraria")
             {
                 spriteBatch.Draw(TextureAssets.OneDropLogo.Value, new Vector2(x + xOffsetFromSprite + config.TextXOffset, y + tooltipHeight), TextPulse(RarityColor(item, line)));
-                tooltipHeight += 24 + config.Spacing;
+                tooltipHeight += config.Spacing + 24;
             }
             else
             {
                 ChatManager.DrawColorCodedStringWithShadow(spriteBatch, FontAssets.MouseText.Value, line.Text, new Vector2(x + xOffsetFromSprite + config.TextXOffset, y + tooltipHeight), TextPulse(RarityColor(item, line)), 0f, Vector2.Zero, Vector2.One, -1f, 2f);
-                tooltipHeight += (int)StringSize(line.Text).Y + config.Spacing;
+                tooltipHeight += (int)GetStringSize(line.Text).Y + config.Spacing;
             }
         }
-
         return false;
     }
 }

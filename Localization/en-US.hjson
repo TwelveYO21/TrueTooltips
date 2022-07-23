@@ -66,7 +66,6 @@ Mods:
             SpecialPrice: Special Price (e.g., "{$LegacyTooltip.50} 5 defender medals")
             Price: Price (e.g., "{$LegacyTooltip.50} 1 {$LegacyInterface.16}")
         }
-
         TTGlobalItem:
         {
             Speed: " uses per second"

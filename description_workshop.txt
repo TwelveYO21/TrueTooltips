@@ -1,5 +1,5 @@
 
-[b]True Tooltips is a highly customizable tooltip-enhancing mod. All features can be turned off.[/b]
+[b]The 1.4 port of True Tooltips. True Tooltips is a highly customizable tooltip-enhancing mod. All features can be turned off.[/b]
 
 [h1]Features[/h1]
 [list]
@@ -29,6 +29,9 @@
 
 [*]Lets you turn off the pulsing of the text.
 [/list]
+
+[hr][/hr]
+Please report any bugs on GitHub, the Terraria Community Forums or the Steam Discussions.
 
 [url=https://github.com/Graumen/TrueTooltips]Open Source on GitHub[/url]
 [url=https://forums.terraria.org/index.php?threads/true-tooltips-1-4.89106/]Terraria Community Forums Thread[/url]
