@@ -31,6 +31,9 @@
 [/list]
 
 [hr][/hr]
+Russian translation by Imapo
+
+[hr][/hr]
 Please report any bugs on GitHub, the Terraria Community Forums or the Steam Discussions.
 
 [url=https://github.com/Graumen/TrueTooltips]Open Source on GitHub[/url]

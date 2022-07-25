@@ -1,0 +1,82 @@
+﻿Mods:
+{
+    TrueTooltips:
+    {
+        Config:
+        {
+            XOffset: Смещение по X
+            YOffset: Смещение по Y
+            Background: Фон
+            BGPaddingLeft: "Background Left Padding" #Needs Translation
+            BGPaddingRight: Отступ фона справа
+            BGPaddingTop: "Background Top Padding" #Needs Translation
+            BGPaddingBottom: Отступ фона снизу
+            TextXOffset: Смещение текста по X
+            TextYOffset: Смещение текста по Y
+            Sprite: Спрайт
+            SpriteTooltip: Отображать спрайт элемента во всплывающей подсказке всегда или только при удерживании SHIFT
+            SpriteBG: "Sprite Background" #Needs Translation
+            Spacing: Межстрочный интервал
+            TextPulse: Пульсация текста
+
+            Header1: Настраиваемые подсказки
+
+            ItemAmmo: Боеприпасы
+            ItemAmmoTooltip: Добавляет всплывающую подсказку, показывающую боеприпасы предмета, а также мод, добавляющий боеприпасы, когда включен "Мод предмета"
+            ItemMod: Мод предмета
+            ItemModTooltip: Показывает название Мода, добавляющего предмет при удерживании SHIFT (или всегда, в качестве альтернативы)
+            BetterPrice: Улучшенная цена
+            BetterPriceTooltip: Улучшает всплывающую подсказку цены, чтобы она всегда была видимой, имела индивидуальные цвета для разных монет и была менее избыточной
+            BetterSpeed: Улучшенная скорость
+            BetterSpeedTooltip: Улучшает всплывающую подсказку скорости, отображая количество использований в секунду вместо, например, "{$LegacyTooltip.8}"
+            BetterKnockback: Улучшенное отбрасывание
+            BetterKnockbackTooltip: Улучшает всплывающую подсказку отбрасывания, отображая числовое значение вместо, например, "{$LegacyTooltip.19}"
+            WpnPlusAmmoDmg: Урон оружия + амуниции
+            WpnPlusAmmoDmgTooltip: Улучшает всплывающую подсказку "ванильный урон", отображая совокупный урон от оружия и его боеприпасов.
+            WpnPlusAmmoKb: Отбрасывание оружия + амуниции
+            WpnPlusAmmoKbTooltip: Заставляет всплывающую подсказку "Отбрасывание" отображать комбинированный отбрасываемый удар оружия и его боеприпасов, если включен параметр "Лучший отбрасываемый удар".
+            AmmoDmgKbSeparate: Урон и Отбрасывание боеприпасов отдельно
+            AmmoDmgKbSeparateTooltip: Показывает урон от боеприпасов и отбрасывание боеприпасов отдельно при удержании SHIFT или всегда, в качестве альтернативы
+
+            Header2: Ванильные всплывающие подсказки
+
+            Damage: Урон (т.е., "38 магического{$LegacyTooltip.55}")
+            CritChance: Шанс крита (т.е., "24{$LegacyTooltip.5}")
+            Speed: Скорость (т.е., "{$LegacyTooltip.8}")
+            SpecialSpeedScaling: Специальное увеличение скорости (т.е., "50% прирост от повышения скорости атаки")
+            Knockback: Отбрасывание (т.е., "{$LegacyTooltip.19}")
+            FishingPower: Навык рыбалки (т.е., "45% навыка рыбалки")
+            BaitPower: Качество приманки (т.е., "40% качества приманки")
+            WandConsumes: Использований жезла (т.е., "{$LegacyTooltip.52}{$ItemName.Bone}")
+            Defense: Защита (т.е., "4{$LegacyTooltip.25}")
+            PickPower: Мощность кирки (т.е., "150{$LegacyTooltip.26}")
+            AxePower: Мощность топора (т.е., "85{$LegacyTooltip.27}")
+            HammerPower: Мощность молота (т.е., "90{$LegacyTooltip.28}")
+            TileBoost: Ускорение постройки плиток (т.е., "+3{$LegacyTooltip.54}")
+            HealLife: Лечение (т.е., "Восстанавливает 100 единиц здоровья")
+            HealMana: Восстановление маны (т.е., "Восстанавливает 100 маны")
+            UseMana: Использование маны (т.е., "Использует 17 маны")
+            BuffTime: Время бафа (т.е., "Действует 5 минут")
+            OneDropLogo: Иконка предмета
+            GoodModifier: Хорошая модификация (т.е., "+10{$LegacyTooltip.39}")
+            BadModifier: Плохая модификация (т.е., "-10{$LegacyTooltip.39}")
+            SetBonus: Бонус комплекта (т.е., "{$LegacyTooltip.48} {$ArmorSetBonus.Meteor}")
+            JourneyResearch: Исследование путешествия (т.е., "Изучите ещё 30 для возможности клонирования")
+            BestiaryNotes: Подсказки бестиария (т.е., "{$Bestiary_ItemDropConditions.IsCrimson}")
+            SpecialPrice: Специальная цена (т.е., "{$LegacyTooltip.50} 5 медалей защитника")
+            Price: Цена (т.е., "{$LegacyTooltip.50} 1 {$LegacyInterface.16}")
+        }
+        TTGlobalItem:
+        {
+            Speed: " использований в секунду"
+            Knockback: " отбрасывание"
+            No: "No " #Needs Translation
+            Arrow: "Arrow" #Needs Translation
+            Coin: "Coin" #Needs Translation
+            Bullet: "Bullet" #Needs Translation
+            Dart: "Dart" #Needs Translation
+            Rocket: "Rocket" #Needs Translation
+            Solution: "Solution" #Needs Translation
+        }
+    }
+}

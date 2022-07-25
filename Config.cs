@@ -93,7 +93,12 @@ internal class Config : ModConfig
     [Tooltip("$Mods.TrueTooltips.Config.BetterKnockbackTooltip")]
     [DefaultValue(true)]
     public bool BetterKnockback;
-
+    /*
+    [Label("$Mods.TrueTooltips.Config.MiningSpeed")]
+    [Tooltip("$Mods.TrueTooltips.Config.MiningSpeedTooltip")]
+    [DefaultValue(true)]
+    public bool MiningSpeed;
+    */
     [Label("$Mods.TrueTooltips.Config.WpnPlusAmmoDmg")]
     [Tooltip("$Mods.TrueTooltips.Config.WpnPlusAmmoDmgTooltip")]
     [DefaultValue(true)]

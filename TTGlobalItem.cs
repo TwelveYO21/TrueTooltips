@@ -428,6 +428,8 @@ internal class TTGlobalItem : GlobalItem
             else if(config.BestiaryNotes.Color != Color.White)
                 bestiaryNotes.OverrideColor = config.BestiaryNotes.Color;
         }
+        //  if(item.pick > 0 && player.pickSpeed - 1f != 0f && config.MiningSpeed)
+        //    lines.Add(new TooltipLine(Mod, "MiningSpeed", (player.pickSpeed - 1f > 0f ? "+" : string.Empty) + (player.pickSpeed - 1f) + "% mining speed"));
         if(item.useAmmo > 0 && config.ItemAmmo)
             lines.Add(new TooltipLine(Mod, "ItemAmmo", itemAmmo != null ? itemAmmo.HoverName + ((keyState.PressingShift() && config.ItemMod == Mode.Shift || config.ItemMod == Mode.Always) && itemAmmo.ModItem != null ? " - " + itemAmmo.ModItem.Mod.DisplayName : string.Empty) : GetTextValue("No") + item.useAmmo switch { 40 => GetTextValue("Arrow"), 71 => GetTextValue("Coin"), 97 => GetTextValue("Bullet"), 283 => GetTextValue("Dart"), 771 => GetTextValue("Rocket"), 780 => GetTextValue("Solution"), _ => Lang.GetItemNameValue(item.useAmmo) }) { OverrideColor = itemAmmo != null ? RarityColor(itemAmmo) : new Color(120, 120, 120) });
         if(item.shopSpecialCurrency == -1 && item.type is < 71 or > 74 && config.Price)
