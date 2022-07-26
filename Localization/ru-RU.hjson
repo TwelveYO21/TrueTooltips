@@ -7,15 +7,15 @@
             XOffset: Смещение по X
             YOffset: Смещение по Y
             Background: Фон
-            BGPaddingLeft: "Background Left Padding" #Needs Translation
+            BGPaddingLeft: Отступ фона слева
             BGPaddingRight: Отступ фона справа
-            BGPaddingTop: "Background Top Padding" #Needs Translation
+            BGPaddingTop: Отступ фона сверху
             BGPaddingBottom: Отступ фона снизу
             TextXOffset: Смещение текста по X
             TextYOffset: Смещение текста по Y
             Sprite: Спрайт
-            SpriteTooltip: Отображать спрайт элемента во всплывающей подсказке всегда или только при удерживании SHIFT
-            SpriteBG: "Sprite Background" #Needs Translation
+            SpriteTooltip: Отображать спрайт элемента всегда или только при удерживании SHIFT
+            SpriteBG: Фон спрайта
             Spacing: Межстрочный интервал
             TextPulse: Пульсация текста
 
@@ -25,16 +25,16 @@
             ItemAmmoTooltip: Добавляет всплывающую подсказку, показывающую боеприпасы предмета, а также мод, добавляющий боеприпасы, когда включен "Мод предмета"
             ItemMod: Мод предмета
             ItemModTooltip: Показывает название Мода, добавляющего предмет при удерживании SHIFT (или всегда, в качестве альтернативы)
-            BetterPrice: Улучшенная цена
+            BetterPrice: Лучшая цена
             BetterPriceTooltip: Улучшает всплывающую подсказку цены, чтобы она всегда была видимой, имела индивидуальные цвета для разных монет и была менее избыточной
             BetterSpeed: Улучшенная скорость
             BetterSpeedTooltip: Улучшает всплывающую подсказку скорости, отображая количество использований в секунду вместо, например, "{$LegacyTooltip.8}"
             BetterKnockback: Улучшенное отбрасывание
             BetterKnockbackTooltip: Улучшает всплывающую подсказку отбрасывания, отображая числовое значение вместо, например, "{$LegacyTooltip.19}"
-            WpnPlusAmmoDmg: Урон оружия + амуниции
+            WpnPlusAmmoDmg: Урон оружия + боеприпасов
             WpnPlusAmmoDmgTooltip: Улучшает всплывающую подсказку "ванильный урон", отображая совокупный урон от оружия и его боеприпасов.
-            WpnPlusAmmoKb: Отбрасывание оружия + амуниции
-            WpnPlusAmmoKbTooltip: Заставляет всплывающую подсказку "Отбрасывание" отображать комбинированный отбрасываемый удар оружия и его боеприпасов, если включен параметр "Лучший отбрасываемый удар".
+            WpnPlusAmmoKb: Отбрасывание оружия + боеприпасов
+            WpnPlusAmmoKbTooltip: Заставляет всплывающую подсказку "Отбрасывание" отображать комбинированное значение отбрасывания оружия и его боеприпасов, если включен параметр "Улучшенное отбрасывание".
             AmmoDmgKbSeparate: Урон и Отбрасывание боеприпасов отдельно
             AmmoDmgKbSeparateTooltip: Показывает урон от боеприпасов и отбрасывание боеприпасов отдельно при удержании SHIFT или всегда, в качестве альтернативы
 
@@ -70,13 +70,13 @@
         {
             Speed: " использований в секунду"
             Knockback: " отбрасывание"
-            No: "No " #Needs Translation
-            Arrow: "Arrow" #Needs Translation
-            Coin: "Coin" #Needs Translation
-            Bullet: "Bullet" #Needs Translation
-            Dart: "Dart" #Needs Translation
-            Rocket: "Rocket" #Needs Translation
-            Solution: "Solution" #Needs Translation
+            No: "Не "
+            Arrow: Стрела
+            Coin: Монета
+            Bullet: Пуля
+            Dart: Дротик
+            Rocket: Ракета
+            Solution: Раствор
         }
     }
 }
