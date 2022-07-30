@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Terraria.Localization;
@@ -10,6 +9,7 @@ namespace TrueTooltips;
 
 internal class TTGlobalItem : GlobalItem
 {
+    internal static List<int> blackList = new();
     private static Action loadCorners;
     private static Color priceColor;
     private static readonly Config config = GetInstance<Config>();
@@ -39,6 +39,14 @@ internal class TTGlobalItem : GlobalItem
         };
     }
 
+    internal static void ToggleTooltip(int type)
+    {
+        if(blackList.Contains(type))
+            blackList.Remove(type);
+        else
+            blackList.Add(type);
+    }
+
     private static Color RarityColor(Item item, TooltipLine line = null) => line switch
     {
         { OverrideColor: not null } => line.OverrideColor.Value,
@@ -60,11 +68,14 @@ internal class TTGlobalItem : GlobalItem
 
     public override void ModifyTooltips(Item item, List<TooltipLine> lines)
     {
+        if(blackList.Contains(item.type))
+            return;
+
         Item itemAmmo = null;
         Player player = LocalPlayer;
         int value = 0;
 
-        TooltipLine Find(string name) => lines.Find(l => l.Name == name);
+        TooltipLine Find(string name) => lines.Find(line => line.Name == name);
 
         TooltipLine itemName = Find("ItemName");
         TooltipLine favorite = Find("Favorite");
@@ -380,9 +391,9 @@ internal class TTGlobalItem : GlobalItem
         if(item.prefix > 0)
         {
             if(!config.GoodModifier.On)
-                lines.RemoveAll(l => l.IsModifier && !l.IsModifierBad);
+                lines.RemoveAll(line => line.IsModifier && !line.IsModifierBad);
             if(!config.BadModifier.On)
-                lines.RemoveAll(l => l.IsModifierBad);
+                lines.RemoveAll(line => line.IsModifierBad);
             foreach(TooltipLine line in lines)
             {
                 if(line.IsModifier && !line.IsModifierBad && config.GoodModifier.Color != new Color(120, 190, 120))
@@ -478,14 +489,19 @@ internal class TTGlobalItem : GlobalItem
             else if(item.type != 3817)
                 priceColor = new Color(120, 120, 120);
         }
+        if(config.HideTooltip)
+            lines.Add(new TooltipLine(Mod, "HideTooltip", Language.GetTextValue("Mods.TrueTooltips.TTGlobalItem.HideTooltip", string.Join(',', TTMod.ToggleTooltipKey.GetAssignedKeys()))));
         if(specialPrice != null && !config.SpecialPrice)
             lines.Remove(specialPrice);
         if(price != null && (value > 0 && config.BetterPrice || !config.Price))
             lines.Remove(price);
     }
 
-    public override bool PreDrawTooltip(Item item, ReadOnlyCollection<TooltipLine> lines, ref int effectX, ref int effectY)
+    public override bool PreDrawTooltip(Item item, System.Collections.ObjectModel.ReadOnlyCollection<TooltipLine> lines, ref int effectX, ref int effectY)
     {
+        if(blackList.Contains(item.type))
+            return false;
+
         Texture2D sprite = TextureAssets.Item[item.type].Value;
         Rectangle spriteFrame = itemAnimations[item.type]?.GetFrame(sprite) ?? sprite.Frame();
         bool showSprite = config.Sprite == Mode.Always || keyState.PressingShift() && config.Sprite == Mode.Shift;

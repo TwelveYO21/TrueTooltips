@@ -23,6 +23,8 @@ The 1.4 port of True Tooltips. True Tooltips is a highly customizable tooltip-en
 
 - Improves the vanilla damage tooltip line to show the combined damage of the weapon and its ammo.
 
+- Lets you turn off tooltips of individual items.
+
 - Lets you change the position of the tooltip.
 
 - Lets you change the distance between tooltip lines.

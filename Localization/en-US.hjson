@@ -37,6 +37,7 @@ Mods:
             WpnPlusAmmoKbTooltip: Makes the knockback tooltip line show the combined knockback of the weapon and its ammo if "Better Knockback" is on
             AmmoDmgKbSeparate: Ammo Damage & Ammo Knockback Separate
             AmmoDmgKbSeparateTooltip: Show ammo damage & ammo knockback separately when holding SHIFT, or always, alternatively
+            HideTooltip: Hide Tooltip
 
             Header2: Vanilla Tooltip Lines
 
@@ -77,6 +78,7 @@ Mods:
             Dart: Dart
             Rocket: Rocket
             Solution: Solution
+            HideTooltip: Press {0} to hide this tooltip
         }
     }
 }

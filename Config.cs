@@ -114,6 +114,10 @@ internal class Config : ModConfig
     [DefaultValue(TrueTooltips.Mode.Shift)]
     public Mode AmmoDmgKbSeparate;
 
+    [Label("$Mods.TrueTooltips.Config.HideTooltip")]
+    [DefaultValue(true)]
+    public bool HideTooltip;
+
     [Header("$Mods.TrueTooltips.Config.Header2")]
 
     [Label("$LegacyTooltip.56")]
