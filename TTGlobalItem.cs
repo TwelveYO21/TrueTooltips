@@ -68,7 +68,7 @@ internal class TTGlobalItem : GlobalItem
 
     public override void ModifyTooltips(Item item, List<TooltipLine> lines)
     {
-        if(blackList.Contains(item.type))
+        if(blackList.Contains(item.type) || gameMenu)
             return;
 
         Item itemAmmo = null;
@@ -499,7 +499,7 @@ internal class TTGlobalItem : GlobalItem
 
     public override bool PreDrawTooltip(Item item, System.Collections.ObjectModel.ReadOnlyCollection<TooltipLine> lines, ref int effectX, ref int effectY)
     {
-        if(blackList.Contains(item.type))
+        if(blackList.Contains(item.type) || gameMenu)
             return false;
 
         Texture2D sprite = TextureAssets.Item[item.type].Value;
@@ -585,7 +585,7 @@ internal class TTGlobalItem : GlobalItem
                 spriteBatch.Draw(background, new Rectangle(bgX, y, config.BGPaddingLeft + textLeft + 4, spriteMax), new Rectangle(10, 10, 10, 10), config.Background);
                 spriteBatch.Draw(background, new Rectangle(x + spriteMax, y, tooltipWidth + config.BGPaddingRight + 18, spriteMax), new Rectangle(10, 10, 10, 10), config.Background);
                 spriteBatch.Draw(background, new Rectangle(bgX, y + spriteMax, bgWidth, tooltipHeight + config.BGPaddingBottom - spriteMax + 4), new Rectangle(10, 10, 10, 10), config.Background);
-                loadCorners();
+                loadCorners?.Invoke();
                 if(corners[0] != null)
                     spriteBatch.Draw(corners[0], new Vector2(x, y), config.Background);
                 if(corners[1] != null)

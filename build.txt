@@ -3,4 +3,4 @@ displayName = True Tooltips
 homepage = https://github.com/Graumen/TrueTooltips
 playableOnPreview = false
 side = Client
-version = 1.4.2.1
+version = 1.4.2.2
