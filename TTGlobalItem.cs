@@ -490,7 +490,7 @@ internal class TTGlobalItem : GlobalItem
                 priceColor = new Color(120, 120, 120);
         }
         if(config.HideTooltip)
-            lines.Add(new TooltipLine(Mod, "HideTooltip", Language.GetTextValue("Mods.TrueTooltips.TTGlobalItem.HideTooltip", string.Join(',', TTMod.ToggleTooltipKey.GetAssignedKeys()))));
+            lines.Add(new TooltipLine(Mod, "HideTooltip", Language.GetTextValue("Mods.TrueTooltips.TTGlobalItem.HideTooltip", TTMod.ToggleTooltipKey.GetAssignedKeys().Count > 0 ? string.Join(',', TTMod.ToggleTooltipKey.GetAssignedKeys()) : Lang.menu[195].Value)));
         if(specialPrice != null && !config.SpecialPrice)
             lines.Remove(specialPrice);
         if(price != null && (value > 0 && config.BetterPrice || !config.Price))
