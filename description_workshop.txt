@@ -39,6 +39,7 @@
 
 [hr][/hr]
 Russian translation by Imapo
+Chinese translation by -Cyril-
 
 [hr][/hr]
 Please report any bugs on GitHub, the Terraria Community Forums or the Steam Discussions.

@@ -1,0 +1,84 @@
+﻿Mods:
+{
+    TrueTooltips:
+    {
+        Config:
+        {
+            XOffset: 文本框水平偏移
+            YOffset: 文本框垂直偏移
+            Background: 文本框颜色
+            BGPaddingLeft: 文本框左侧填充
+            BGPaddingRight: 文本框右侧填充
+            BGPaddingTop: 文本框上部填充
+            BGPaddingBottom: 文本框下部填充
+            TextXOffset: 文本水平偏移
+            TextYOffset: 文本垂直偏移
+            Sprite: 显示物品外观
+            SpriteTooltip: 是否始终显示物品外观或仅在按住Shift键时显示
+            SpriteBG: 物品外观背景框颜色
+            Spacing: 行距
+            TextPulse: 文本轻微闪烁
+
+            Header1: 额外提示信息
+
+            ItemAmmo: 显示武器使用的弹药
+            ItemAmmoTooltip: 在提示中显示物品的弹药。若开启了“显示物品所属模组”则弹药所属模组也会显示
+            ItemMod: 显示物品所属模组
+            ItemModTooltip: 是否始终显示物品所属模组、仅在按住Shift键时显示或不显示
+            BetterPrice: 显示售价
+            BetterPriceTooltip: 永远在提示中显示物品的售价，对于不同的钱币有不同的颜色，直观清晰
+            BetterSpeed: 显示详细攻速
+            BetterSpeedTooltip: 将“{$LegacyTooltip.8}”这类不明所以的攻速提示替换为“X 每秒使用次数”，更加直观
+            BetterKnockback: 显示详细击退
+            BetterKnockbackTooltip: 用击退数据替换掉如“{$LegacyTooltip.19}”的击退提示
+            WpnPlusAmmoDmg: 显示 武器 + 弹药 总伤害
+            WpnPlusAmmoDmgTooltip: 改进原版的伤害数值提示，显示武器与弹药相加的伤害
+            WpnPlusAmmoKb: 显示 武器 + 弹药 总击退
+            WpnPlusAmmoKbTooltip: 与“显示详细击退”功能同时开启时，会显示武器与弹药相加的击退
+            AmmoDmgKbSeparate: 分别显示弹药与武器的伤害与击退
+            AmmoDmgKbSeparateTooltip: 选择仅在按下Shift时分别显示弹药与武器的伤害与击退或总是显示 (例: 25 + 11 远程伤害)
+            HideTooltip: 允许通过绑定键位隐藏物品提示
+
+            Header2: 原版提示信息
+
+            Damage: 伤害 (例: "38 魔法{$LegacyTooltip.55}")
+            CritChance: 暴击率 (例: "24{$LegacyTooltip.5}")
+            Speed: 使用速度 (例: "{$LegacyTooltip.8}")
+            SpecialSpeedScaling: 特殊攻速加成 (例: "受到全局攻速加成的效果为原有的50%")
+            Knockback: 击退 (例: "{$LegacyTooltip.19}")
+            FishingPower: 渔力 (例: "45%渔力")
+            BaitPower: 鱼饵力 (例: "40%鱼饵力")
+            WandConsumes: 魔棒消耗物 (例: "{$LegacyTooltip.52}{$ItemName.Bone}")
+            Defense: 防御 (例: "4{$LegacyTooltip.25}")
+            PickPower: 镐力 (例: "150{$LegacyTooltip.26}")
+            AxePower: 斧力 (例: "85{$LegacyTooltip.27}")
+            HammerPower: 锤力 (例: "90{$LegacyTooltip.28}")
+            TileBoost: 放置范围加成 (例: "+3{$LegacyTooltip.54}")
+            HealLife: 生命值恢复 (例: "恢复100生命值")
+            HealMana: 魔力恢复 (例: "恢复100魔力")
+            UseMana: 魔力消耗 (例: "使用17魔力")
+            BuffTime: 增益药水持续时间 (例: "5分钟持续时间")
+            OneDropLogo: One Drop 悠悠球图标
+            GoodModifier: 正面词缀 (例: "+10{$LegacyTooltip.39}")
+            BadModifier: 负面词缀 (例: "-10{$LegacyTooltip.39}")
+            SetBonus: 套装效果 (例: "{$LegacyTooltip.48} {$ArmorSetBonus.Meteor}")
+            JourneyResearch: 旅途模式研究 (例: "再研究*30*个即可解锁复制功能")
+            BestiaryNotes: 怪物图鉴提示 (例: "{$Bestiary_ItemDropConditions.IsCrimson}")
+            SpecialPrice: 特殊购买价 (例: "{$LegacyTooltip.50} 5 护卫奖章")
+            Price: 购买价 (例: "{$LegacyTooltip.50} 1 {$LegacyInterface.16}")
+        }
+        TTGlobalItem:
+        {
+            Speed: " 每秒使用次数"
+            Knockback: " 击退"
+            No: "缺乏弹药: "
+            Arrow: 箭
+            Coin: 钱币
+            Bullet: 子弹
+            Dart: 镖
+            Rocket: 火箭
+            Solution: 溶液
+            HideTooltip: 按下 {0} 键以隐藏该物品的工具提示
+        }
+    }
+}
