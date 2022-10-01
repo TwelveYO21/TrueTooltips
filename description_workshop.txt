@@ -31,6 +31,12 @@
 [/list]
 
 [hr][/hr]
+[h1]Planned Features[/h1]
+
+- Ability to disable tooltips for specific items.
+- An in-game config to change the order of tooltip lines and recolor multiple tooltip lines at once.
+
+[hr][/hr]
 Russian translation by Imapo
 
 [hr][/hr]

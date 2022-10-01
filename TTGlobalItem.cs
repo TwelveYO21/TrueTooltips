@@ -10,27 +10,33 @@ namespace TrueTooltips;
 
 internal class TTGlobalItem : GlobalItem
 {
+    private static Action loadCorners;
     private static Color priceColor;
+    private static readonly Config config = GetInstance<Config>();
     private static readonly Texture2D[] corners = new Texture2D[4];
 
     internal static void LoadCorners()
     {
-        List<Color[]> cornerData = new() { new Color[100], new Color[100], new Color[100], new Color[100] };
-        Texture2D background = TextureAssets.InventoryBack13.Value;
-        var bgColor = new Color[1];
-        int[] cornerX = { 0, background.Width - 10, 0, background.Width - 10 };
-        int[] cornerY = { 0, 0, background.Height - 10, background.Height - 10 };
-
-        background.GetData(0, new Rectangle(10, 10, 1, 1), bgColor, 0, 1);
-        for(int i = 0; i < corners.Length; i++)
-            corners[i] = new Texture2D(spriteBatch.GraphicsDevice, 10, 10);
-        for(int i = 0; i < cornerData.Count; i++)
+        loadCorners = () =>
         {
-            background.GetData(0, new Rectangle(cornerX[i], cornerY[i], 10, 10), cornerData[i], 0, 100);
-            for(int j = 0; j < cornerData[i].Length; j++)
-                cornerData[i][j] = cornerData[i][j].A > 0 ? Color.Transparent : bgColor[0];
-            corners[i]?.SetData(cornerData[i]);
-        }
+            List<Color[]> cornerData = new() { new Color[100], new Color[100], new Color[100], new Color[100] };
+            Texture2D background = TextureAssets.InventoryBack13.Value;
+            var bgColor = new Color[1];
+            int[] cornerX = { 0, background.Width - 10, 0, background.Width - 10 };
+            int[] cornerY = { 0, 0, background.Height - 10, background.Height - 10 };
+
+            background.GetData(0, new Rectangle(10, 10, 1, 1), bgColor, 0, 1);
+            for(int i = 0; i < corners.Length; i++)
+                corners[i] = new Texture2D(spriteBatch.GraphicsDevice, 10, 10);
+            for(int i = 0; i < cornerData.Count; i++)
+            {
+                background.GetData(0, new Rectangle(cornerX[i], cornerY[i], 10, 10), cornerData[i], 0, 100);
+                for(int j = 0; j < cornerData[i].Length; j++)
+                    cornerData[i][j] = cornerData[i][j].A > 0 ? Color.Transparent : bgColor[0];
+                corners[i]?.SetData(cornerData[i]);
+            }
+            loadCorners = () => { };
+        };
     }
 
     private static Color RarityColor(Item item, TooltipLine line = null) => line switch
@@ -54,7 +60,6 @@ internal class TTGlobalItem : GlobalItem
 
     public override void ModifyTooltips(Item item, List<TooltipLine> lines)
     {
-        Config config = GetInstance<Config>();
         Item itemAmmo = null;
         Player player = LocalPlayer;
         int value = 0;
@@ -428,8 +433,7 @@ internal class TTGlobalItem : GlobalItem
             else if(config.BestiaryNotes.Color != Color.White)
                 bestiaryNotes.OverrideColor = config.BestiaryNotes.Color;
         }
-        //  if(item.pick > 0 && player.pickSpeed - 1f != 0f && config.MiningSpeed)
-        //    lines.Add(new TooltipLine(Mod, "MiningSpeed", (player.pickSpeed - 1f > 0f ? "+" : string.Empty) + (player.pickSpeed - 1f) + "% mining speed"));
+        //
         if(item.useAmmo > 0 && config.ItemAmmo)
             lines.Add(new TooltipLine(Mod, "ItemAmmo", itemAmmo != null ? itemAmmo.HoverName + ((keyState.PressingShift() && config.ItemMod == Mode.Shift || config.ItemMod == Mode.Always) && itemAmmo.ModItem != null ? " - " + itemAmmo.ModItem.Mod.DisplayName : string.Empty) : GetTextValue("No") + item.useAmmo switch { 40 => GetTextValue("Arrow"), 71 => GetTextValue("Coin"), 97 => GetTextValue("Bullet"), 283 => GetTextValue("Dart"), 771 => GetTextValue("Rocket"), 780 => GetTextValue("Solution"), _ => Lang.GetItemNameValue(item.useAmmo) }) { OverrideColor = itemAmmo != null ? RarityColor(itemAmmo) : new Color(120, 120, 120) });
         if(item.shopSpecialCurrency == -1 && item.type is < 71 or > 74 && config.Price)
@@ -482,7 +486,6 @@ internal class TTGlobalItem : GlobalItem
 
     public override bool PreDrawTooltip(Item item, ReadOnlyCollection<TooltipLine> lines, ref int effectX, ref int effectY)
     {
-        Config config = GetInstance<Config>();
         Texture2D sprite = TextureAssets.Item[item.type].Value;
         Rectangle spriteFrame = itemAnimations[item.type]?.GetFrame(sprite) ?? sprite.Frame();
         bool showSprite = config.Sprite == Mode.Always || keyState.PressingShift() && config.Sprite == Mode.Shift;
@@ -566,6 +569,7 @@ internal class TTGlobalItem : GlobalItem
                 spriteBatch.Draw(background, new Rectangle(bgX, y, config.BGPaddingLeft + textLeft + 4, spriteMax), new Rectangle(10, 10, 10, 10), config.Background);
                 spriteBatch.Draw(background, new Rectangle(x + spriteMax, y, tooltipWidth + config.BGPaddingRight + 18, spriteMax), new Rectangle(10, 10, 10, 10), config.Background);
                 spriteBatch.Draw(background, new Rectangle(bgX, y + spriteMax, bgWidth, tooltipHeight + config.BGPaddingBottom - spriteMax + 4), new Rectangle(10, 10, 10, 10), config.Background);
+                loadCorners();
                 if(corners[0] != null)
                     spriteBatch.Draw(corners[0], new Vector2(x, y), config.Background);
                 if(corners[1] != null)
