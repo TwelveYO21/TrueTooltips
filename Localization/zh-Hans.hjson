@@ -2,7 +2,20 @@
 {
     TrueTooltips:
     {
-        Config:
+        MyGlobalItem:
+        {
+            Speed: " 每秒使用次数"
+            Knockback: " 击退"
+            No: "缺乏弹药: "
+            Arrow: 箭
+            Coin: 钱币
+            Bullet: 子弹
+            Dart: 镖
+            Rocket: 火箭
+            Solution: 溶液
+            HideTooltip: 按下 {0} 键以隐藏该物品的工具提示
+        }
+        MyModConfig:
         {
             XOffset: 文本框水平偏移
             YOffset: 文本框垂直偏移
@@ -66,19 +79,6 @@
             BestiaryNotes: 怪物图鉴提示 (例: "{$Bestiary_ItemDropConditions.IsCrimson}")
             SpecialPrice: 特殊购买价 (例: "{$LegacyTooltip.50} 5 护卫奖章")
             Price: 购买价 (例: "{$LegacyTooltip.50} 1 {$LegacyInterface.16}")
-        }
-        TTGlobalItem:
-        {
-            Speed: " 每秒使用次数"
-            Knockback: " 击退"
-            No: "缺乏弹药: "
-            Arrow: 箭
-            Coin: 钱币
-            Bullet: 子弹
-            Dart: 镖
-            Rocket: 火箭
-            Solution: 溶液
-            HideTooltip: 按下 {0} 键以隐藏该物品的工具提示
         }
     }
 }

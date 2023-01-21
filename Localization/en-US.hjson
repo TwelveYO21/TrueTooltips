@@ -2,7 +2,20 @@ Mods:
 {
     TrueTooltips:
     {
-        Config:
+        MyGlobalItem:
+        {
+            Speed: " uses per second"
+            Knockback: " knockback"
+            No: "No "
+            Arrow: Arrow
+            Coin: Coin
+            Bullet: Bullet
+            Dart: Dart
+            Rocket: Rocket
+            Solution: Solution
+            HideTooltip: Press {0} to hide this tooltip
+        }
+        MyModConfig:
         {
             XOffset: Tooltip X Offset
             YOffset: Tooltip Y Offset
@@ -66,19 +79,6 @@ Mods:
             BestiaryNotes: Bestiary Notes (e.g., "{$Bestiary_ItemDropConditions.IsCrimson}")
             SpecialPrice: Special Price (e.g., "{$LegacyTooltip.50} 5 defender medals")
             Price: Price (e.g., "{$LegacyTooltip.50} 1 {$LegacyInterface.16}")
-        }
-        TTGlobalItem:
-        {
-            Speed: " uses per second"
-            Knockback: " knockback"
-            No: "No "
-            Arrow: Arrow
-            Coin: Coin
-            Bullet: Bullet
-            Dart: Dart
-            Rocket: Rocket
-            Solution: Solution
-            HideTooltip: Press {0} to hide this tooltip
         }
     }
 }

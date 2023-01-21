@@ -2,7 +2,20 @@
 {
     TrueTooltips:
     {
-        Config:
+        MyGlobalItem:
+        {
+            Speed: " использований в секунду"
+            Knockback: " отбрасывание"
+            No: "Не "
+            Arrow: Стрела
+            Coin: Монета
+            Bullet: Пуля
+            Dart: Дротик
+            Rocket: Ракета
+            Solution: Раствор
+            HideTooltip: Press {0} to hide this tooltip
+        }
+        MyModConfig:
         {
             XOffset: Смещение по X
             YOffset: Смещение по Y
@@ -37,6 +50,7 @@
             WpnPlusAmmoKbTooltip: Заставляет всплывающую подсказку "Отбрасывание" отображать комбинированное значение отбрасывания оружия и его боеприпасов, если включен параметр "Улучшенное отбрасывание".
             AmmoDmgKbSeparate: Урон и Отбрасывание боеприпасов отдельно
             AmmoDmgKbSeparateTooltip: Показывает урон от боеприпасов и отбрасывание боеприпасов отдельно при удержании SHIFT или всегда, в качестве альтернативы
+            HideTooltip: Hide Tooltip
 
             Header2: Ванильные всплывающие подсказки
 
@@ -65,18 +79,6 @@
             BestiaryNotes: Подсказки бестиария (т.е., "{$Bestiary_ItemDropConditions.IsCrimson}")
             SpecialPrice: Специальная цена (т.е., "{$LegacyTooltip.50} 5 медалей защитника")
             Price: Цена (т.е., "{$LegacyTooltip.50} 1 {$LegacyInterface.16}")
-        }
-        TTGlobalItem:
-        {
-            Speed: " использований в секунду"
-            Knockback: " отбрасывание"
-            No: "Не "
-            Arrow: Стрела
-            Coin: Монета
-            Bullet: Пуля
-            Dart: Дротик
-            Rocket: Ракета
-            Solution: Раствор
         }
     }
 }
