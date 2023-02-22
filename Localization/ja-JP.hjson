@@ -1,0 +1,84 @@
+Mods:
+{
+    TrueTooltips:
+    {
+        MyGlobalItem:
+        {
+            Speed: " 回/秒"
+            Knockback: " ノックバック"
+            No: "不足 "
+            Arrow: 矢
+            Coin: コイン
+            Bullet: 弾丸
+            Dart: ダーツ
+            Rocket: ロケット
+            Solution: ソリューション
+            HideTooltip: {0}キーでツールチップを非表示
+        }
+        MyModConfig:
+        {
+            XOffset: ツールチップ位置 横方向
+            YOffset: ツールチップ位置 縦方向
+            Background: 背景
+            BGPaddingLeft: 背景の余白 左側
+            BGPaddingRight: 背景の余白 右側
+            BGPaddingTop: 背景の余白 上部
+            BGPaddingBottom: 背景の余白 下部
+            TextXOffset: テキスト位置 横方向
+            TextYOffset: テキスト位置 縦方向
+            Sprite: スプライト
+            SpriteTooltip: ツールチップにアイテムのスプライトを常に表示するか、SHIFTキーを押した時のみ表示するか
+            SpriteBG: スプライトの背景
+            Spacing: 行間の余白
+            TextPulse: テキストの点滅表示
+
+            Header1: ツールチップ項目の改良
+
+            ItemAmmo: 弾丸の種類
+            ItemAmmoTooltip: 選択されている弾丸を表示するツールチップ行を追加する。また「MOD名」が有効の場合、弾丸のMOD名も表示する
+            ItemMod: MOD名
+            ItemModTooltip: SHIFTを押している間、アイテムを追加したMOD名を表示する、または常に表示する
+            BetterPrice: 売却価格
+            BetterPriceTooltip: アイテムの売却価格のツールチップ行が追加される。コインごとに異なる色分けで分かりやすくなる
+            BetterSpeed: 改良された使用速度
+            BetterSpeedTooltip: バニラの使用速度のツールチップ表示を数値で表示する変更。例: "{$LegacyTooltip.8}"
+            BetterKnockback: 改良されたノックバック値
+            BetterKnockbackTooltip: バニラのノックバック表示を数値で表示する変更。例: "{$LegacyTooltip.19}"
+            WpnPlusAmmoDmg: 武器+弾丸のダメージ
+            WpnPlusAmmoDmgTooltip: バニラのダメージ値の表示を改良し、武器と弾丸を合わせたダメージを表示する
+            WpnPlusAmmoKb: 武器+弾丸のノックバック値
+            WpnPlusAmmoKbTooltip: 「ノックバック値」の項目を有効にしている際に武器と弾丸を合わせたノックバック値を表示する
+            AmmoDmgKbSeparate: 弾丸ダメージとノックバックの分割表示
+            AmmoDmgKbSeparateTooltip: SHIFTキーを押していると武器と弾丸のダメージとノックバックを別々に表示、または常に表示する
+            HideTooltip: ツールチップ個別非表示機能
+
+            Header2: ツールチップ項目
+
+            Damage: ダメージ (例: "38 魔法{$LegacyTooltip.55}")
+            CritChance: クリティカル率 (例: "24{$LegacyTooltip.5}")
+            Speed: 使用速度 (例: "{$LegacyTooltip.8}")
+            SpecialSpeedScaling: 特殊な速度性能 (例: "50% benefit from attack speed boosts")
+            Knockback: ノックバック (例: "{$LegacyTooltip.19}")
+            FishingPower: フィッシング・パワー (例: "45% フィッシング・パワー")
+            BaitPower: 餌パワー (例: "40% 餌パワー")
+            WandConsumes: 消費するアイテム (例: "{$LegacyTooltip.52}{$ItemName.Bone}")
+            Defense: 防御力 (例: "4{$LegacyTooltip.25}")
+            PickPower: 採掘力 (例: "150{$LegacyTooltip.26}")
+            AxePower: 斧力 (例: "85{$LegacyTooltip.27}")
+            HammerPower: 槌力 (例: "90{$LegacyTooltip.28}")
+            TileBoost: ブロック範囲 (例: "+3{$LegacyTooltip.54}")
+            HealLife: ライフ回復 (例: "回復: 100ライフ")
+            HealMana: マナ回復 (例: "回復: 100マナ")
+            UseMana: 消費マナ (例: "消費: 17マナ")
+            BuffTime: バフ持続時間 (例: "持続時間 5分")
+            OneDropLogo: 「One Drop」のロゴ
+            GoodModifier: 良いModifier (例: "+10{$LegacyTooltip.39}")
+            BadModifier: 良くないModifier (例: "-10{$LegacyTooltip.39}")
+            SetBonus: セットボーナス (例: "{$LegacyTooltip.48} {$ArmorSetBonus.Meteor}")
+            JourneyResearch: ジャーニー調査 (例: "あと30個調査で複製可能")
+            BestiaryNotes:動物図鑑の注釈 (例: "{$Bestiary_ItemDropConditions.IsCrimson}")
+            SpecialPrice: 特殊な価格 (例: "{$LegacyTooltip.50} 5 ディフェンダーのメダル")
+            Price: 売却価格 (例: "{$LegacyTooltip.50} 1 {$LegacyInterface.16}")
+        }
+    }
+}
